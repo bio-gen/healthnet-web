@@ -1,8 +1,16 @@
-body {
-  padding: 50px;
-  font: 14px "Lucida Grande", Helvetica, Arial, sans-serif;
+.navbar {
+  margin-bottom: 0;
+  border-radius: 0;
 }
 
-a {
-  color: #00B7FF;
+.jumbotron {
+  margin-top: 20px;
+}
+
+main {
+  margin-bottom: 40px;
+}
+
+footer {
+  background-color: #f2f2f2;
 }
