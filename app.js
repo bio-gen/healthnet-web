@@ -6,9 +6,15 @@ var cookieParser = require('cookie-parser');
 var bodyParser = require('body-parser');
 
 var index = require('./routes/index');
+var auth = require('./routes/auth');
+var dashboard = require('./routes/dashboard');
 var users = require('./routes/users');
 
 var app = express();
+
+var properties = {
+  API_URL: 'http://healthnetz.herokuapp.com/v1'
+};
 
 // view engine setup
 app.set('views', path.join(__dirname, 'views'));
@@ -24,6 +30,8 @@ app.use(express.static(path.join(__dirname, 'public')));
 
 // routes
 app.use('/', index);
+app.use('/auth', auth);
+app.use('/dashboard', dashboard);
 app.use('/users', users);
 
 // catch 404 and forward to error handler
@@ -45,3 +53,4 @@ app.use(function(err, req, res, next) {
 });
 
 module.exports = app;
+module.exports.properties = properties;

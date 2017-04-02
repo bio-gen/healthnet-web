@@ -21,36 +21,40 @@
           </button>
           <a class="navbar-brand" href="#">Our Icon</a>
         </div>
+        <div class="collapse navbar-collapse" id="myNavbar">
+          <ul class="nav navbar-nav">
+            <li class="active"><a href="#">Home</a></li>
+            <li><a href="#">Profile</a></li>
+            <li><a href="#">Meeting</a></li>
+            <li><a href="#">Inbox</a></li>
+            <li><a href="#">Notifications</a></li>
+            <li><a href="#">Settings</a></li>
+          </ul>
+          <ul class="nav navbar-nav navbar-right">
+            <li><a href="/auth/logout"><span class="glyphicon glyphicon-log-in"></span> Logout</a></li>
+          </ul>
+        </div>
       </div>
     </nav>
 
     <main>
-      <div class="container-fluid">
-    		<div class="row">
-    			<div class="col-md-4 col-md-offset-4">
-    				<form action="/auth/login" method="POST">
+      <div class="jumbotron">
+        <div class="container text-center">
+          <h1><%= name %></h1>
+          <p>Student/Degree/Specialization</p>
+          <p>Institution</p>
+          <p>Location</p>
+        </div>
+      </div>
 
-    					<div class="form-group">
-                <label for="email">Email Address</label>
-                <input type="email" class="form-control" id="email" name="email" aria-describedby="emailHelp" placeholder="Enter email">
-                <small id="emailHelp" class="form-text text-muted">We'll never share your email with anyone else.</small>
-              </div>
-
-              <div class="form-group">
-                <label for="password">Password</label>
-                <input type="password" class="form-control" id="password" name="password" placeholder="Password">
-              </div>
-
-              <div class="form-group row">
-                <div class="offset-sm-2 col-sm-10">
-                  <button type="submit" class="btn btn-primary">Login</button>
-                </div>
-              </div>
-
-    				</form>
-    			</div>
-    		</div>
-    	</div>
+      <div class="container-fluid bg-3 text-center">
+        <h3>Experience</h3><br>
+        <div class="row">
+          <div class="col-sm-12">
+            <p>Some text..</p>
+          </div>
+        </div>
+      </div>
     </main>
 
     <footer class="container-fluid text-center navbar-fixed-bottom">

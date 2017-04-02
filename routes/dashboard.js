@@ -1,9 +1,9 @@
 var express = require('express');
 var router = express.Router();
 
-/* GET home page. */
+/* GET dashboard. */
 router.get('/', function(req, res, next) {
-  res.render('index', { title: 'HealthNet Web GUI' });
+  res.render('dashboard', { title: 'HealthNet Web GUI', name: 'John Smith' });
 });
 
 module.exports = router;

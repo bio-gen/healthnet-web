@@ -12,9 +12,11 @@
     "debug": "~2.6.0",
     "ejs": "~2.5.5",
     "express": "~4.14.1",
+    "jquery": "^3.2.1",
     "morgan": "~1.7.0",
     "serve-favicon": "~2.3.2",
-    "vue": "^2.2.4"
+    "vue": "^2.2.4",
+    "vue-resource": "^1.2.1"
   },
   "devDependencies": {
     "nodemon": "^1.11.0"
