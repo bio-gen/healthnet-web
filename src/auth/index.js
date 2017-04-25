@@ -51,7 +51,11 @@ export default {
       }
     }, response => {
       context.loading = false
-      context.error = response.status + '-' + response.data
+      if (response.status === 500) {
+        context.error = 'User does not exist'
+      } else {
+        context.error = response.status + '-' + response.data
+      }
     })
   },
 
@@ -111,10 +115,10 @@ export default {
 
   authenticated () {
     var jwt = localStorage.getItem('id_token')
-    if (jwt) {
-      return true
-    } else {
+    if (jwt == null) {
       return false
+    } else {
+      return true
     }
   },
 

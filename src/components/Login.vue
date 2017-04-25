@@ -70,7 +70,7 @@ export default {
       // We need to pass the component's this context
       // to properly make use of http in the auth service
       auth.login(this, credentials, 'dashboard')
-      // router.push('dashboard')
+      this.credentials.password = ''
     }
   }
 }
