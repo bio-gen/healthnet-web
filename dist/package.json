@@ -1,0 +1,13 @@
+{
+  "name": "healthnet-web",
+  "version": "1.0.0",
+  "description": "Web client for HealthNet API",
+  "author": "Gerardo O Figueroa <gerardo_ofc@yahoo.com>",
+  "private": true,
+  "scripts": {
+    "postinstall": "npm install express"
+  },
+  "dependencies": {
+    "serve-static": "^1.12.1"
+  }
+}
