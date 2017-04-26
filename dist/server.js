@@ -1,11 +1,13 @@
-var express = require('express');
-var path = require('path');
-var serveStatic = require('serve-static');
+var express = require('express')
+var path = require('path')
+var serveStatic = require('serve-static')
+var history = require('connect-history-api-fallback')
 
-var app = express();
-app.use(serveStatic(__dirname));
+var app = express()
+app.use(history())
+app.use(serveStatic(__dirname))
 
-var port = process.env.PORT || 5000;
-app.listen(port);
+var port = process.env.PORT || 5000
+app.listen(port)
 
-console.log('server started ' + port);
+console.log('server started ' + port)
