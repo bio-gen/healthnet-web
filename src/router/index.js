@@ -1,6 +1,5 @@
 // src/router/index.js
 
-import Vue from 'vue'
 import Router from 'vue-router'
 import Index from '@/components/Index'
 import SignUp from '@/components/SignUp'
@@ -12,8 +11,6 @@ import Meeting from '@/components/dashboard/Meeting'
 import Inbox from '@/components/dashboard/Inbox'
 import Notifications from '@/components/dashboard/Notifications'
 import Settings from '@/components/dashboard/Settings'
-
-Vue.use(Router)
 
 export default new Router({
   mode: 'history',

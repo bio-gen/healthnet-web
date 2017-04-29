@@ -9,11 +9,32 @@ const SIGNUP_URL = API_URL + 'users/'
 
 export default {
 
-  // User object will let us check authentication status
   user: {
-    id: -1,
+    id: '',
     name: '',
-    email: ''
+    email: '',
+    authenticated: false,
+
+    clear () {
+      this.id = ''
+      this.name = ''
+      this.email = ''
+      this.authenticated = false
+    },
+
+    setUserArgs (id, name, email, authenticated) {
+      this.id = id
+      this.name = name
+      this.email = email
+      this.authenticated = authenticated
+    },
+
+    setUser (user) {
+      this.id = user.id
+      this.name = user.name
+      this.email = user.email
+      this.authenticated = user.authenticated
+    }
   },
 
   postOptions: {
@@ -37,9 +58,12 @@ export default {
       if (!err) {
         localStorage.setItem('id_token', response.body.auth_token)
 
-        this.user.id = response.body.user.id
-        this.user.name = response.body.user.email
-        this.user.email = response.body.user.email
+        this.user.setUserArgs(
+          response.body.user.id,
+          response.body.user.email,
+          response.body.user.email,
+          true
+        )
         localStorage.setItem('user', JSON.stringify(this.user))
 
         // Redirect to a specified route
@@ -79,9 +103,12 @@ export default {
       if (!err) {
         localStorage.setItem('id_token', response.body.auth_token)
 
-        this.user.id = response.body.data.id
-        this.user.name = response.body.data.attributes.email
-        this.user.email = response.body.data.attributes.email
+        this.user.setUserArgs(
+          response.body.user.id,
+          response.body.user.email,
+          response.body.user.email,
+          true
+        )
         localStorage.setItem('user', JSON.stringify(this.user))
 
         // Redirect to a specified route
@@ -109,18 +136,27 @@ export default {
   logout (redirect) {
     localStorage.removeItem('id_token')
     localStorage.removeItem('user')
-    this.user.authenticated = false
+    this.user.clear()
     router.push(redirect)
   },
 
-  authenticated () {
+  checkAuth () {
     var jwt = localStorage.getItem('id_token')
     if (jwt == null) {
-      return false
+      this.user.clear()
     } else {
-      return true
+      this.user.setUser(JSON.parse(localStorage.getItem('user')))
     }
   },
+
+  // authenticated () {
+  //   var jwt = localStorage.getItem('id_token')
+  //   if (jwt == null) {
+  //     return false
+  //   } else {
+  //     return true
+  //   }
+  // },
 
   // The object to be passed as a header for authenticated requests
   getAuthHeader () {
@@ -128,6 +164,11 @@ export default {
       'Authorization': 'Bearer ' + localStorage.getItem('id_token')
     }
   },
+
+  // Get logged user object
+  // getUser () {
+  //   return JSON.parse(localStorage.getItem('user'))
+  // },
 
   // Check for errors
   handleErrors (data) {

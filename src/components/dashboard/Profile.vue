@@ -21,18 +21,17 @@
 </template>
 
 <script>
+import auth from '@/auth'
 export default {
   name: 'profile',
   data () {
     return {
-      msg: 'Profile component'
+      msg: 'Profile component',
+      user: auth.user
     }
   },
   props: {
-    user: {
-      type: Object,
-      default: null
-    }
+
   },
   methods: {
 

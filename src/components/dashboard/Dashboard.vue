@@ -1,38 +1,33 @@
 <template>
   <div class="dashboard">
-    <top :show="true" :user-name="user.name"></top>
-    <main>
-      <router-view :user="user"></router-view>
-    </main>
-    <bottom></bottom>
+    <router-view></router-view>
   </div>
 </template>
 
 <script>
-import Top from '@/components/Top'
-import Bottom from '@/components/Bottom'
 import auth from '@/auth'
 import router from '@/router'
 export default {
   name: 'index',
   components: {
-    Top, Bottom
+
   },
   data () {
     return {
-      msg: 'Dashboard page',
-      user: {
-        id: -1,
-        name: '',
-        email: ''
-      }
+      msg: 'Dashboard page'
     }
   },
   mounted () {
-    if (!auth.authenticated()) {
+    if (!auth.user.authenticated) {
       router.push('/')
     }
-    this.user = JSON.parse(localStorage.getItem('user'))
+  },
+  route: {
+    // Check the users auth status before
+    // allowing navigation to the route
+    canActivate () {
+      return auth.user.authenticated
+    }
   }
 }
 </script>

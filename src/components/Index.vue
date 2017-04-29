@@ -1,23 +1,17 @@
 <template>
   <div class="index">
-    <top></top>
-    <main>
-      <login></login>
-    </main>
-    <bottom></bottom>
+    <login></login>
   </div>
 </template>
 
 <script>
-import Top from './Top'
 import Login from './Login'
-import Bottom from './Bottom'
 import auth from '@/auth'
 import router from '@/router'
 export default {
   name: 'index',
   components: {
-    Top, Login, Bottom
+    Login
   },
   data () {
     return {
@@ -25,7 +19,7 @@ export default {
     }
   },
   mounted () {
-    if (auth.authenticated()) {
+    if (auth.user.authenticated) {
       router.push('dashboard')
     }
   }

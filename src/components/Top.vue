@@ -11,7 +11,7 @@
           </button>
           <a class="navbar-brand" href="/">Our Icon</a>
         </div>
-        <div v-if="show" class="collapse navbar-collapse" id="myNavbar">
+        <div v-if="user.authenticated" class="collapse navbar-collapse" id="myNavbar">
           <ul class="nav navbar-nav">
             <li v-bind:class="{active: isActive('/dashboard')}"><router-link to="/dashboard">Home</router-link></li>
             <li v-bind:class="{active: isActive('/dashboard/profile')}"><router-link to="/dashboard/profile">Profile</router-link></li>
@@ -22,7 +22,7 @@
           </ul>
           <ul class="nav navbar-nav navbar-right">
             <li>
-              <a>{{ userName }}</a>
+              <a>{{ user.name }}</a>
             </li>
             <li>
               <a @click="logout" href="#">
@@ -42,18 +42,12 @@ export default {
   name: 'top',
   data () {
     return {
-      msg: 'Top component'
+      msg: 'Top component',
+      user: auth.user
     }
   },
   props: {
-    show: {
-      type: Boolean,
-      default: false
-    },
-    userName: {
-      type: String,
-      default: ''
-    }
+
   },
   methods: {
     isActive: function (r) {
@@ -62,6 +56,9 @@ export default {
     logout: function () {
       auth.logout('/')
     }
+  },
+  computed: {
+
   }
 }
 </script>
