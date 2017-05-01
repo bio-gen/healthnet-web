@@ -1,7 +1,7 @@
 <template>
   <div class="bottom">
     <footer class="container-fluid text-center navbar-fixed-bottom">
-      <p>Footer Text</p>
+      <p>&copy; {{ year }} HealthNet Inc. All Rights Reserved</p>
     </footer>
   </div>
 </template>
@@ -11,7 +11,8 @@ export default {
   name: 'bottom',
   data () {
     return {
-      msg: 'Bottom component'
+      msg: 'Bottom component',
+      year: new Date().getFullYear()
     }
   }
 }

@@ -18,16 +18,24 @@
             <li v-bind:class="{active: isActive('/dashboard/meeting')}"><router-link to="/dashboard/meeting">Meeting</router-link></li>
             <li v-bind:class="{active: isActive('/dashboard/inbox')}"><router-link to="/dashboard/inbox">Inbox</router-link></li>
             <li v-bind:class="{active: isActive('/dashboard/notifications')}"><router-link to="/dashboard/notifications">Notifications</router-link></li>
-            <li v-bind:class="{active: isActive('/dashboard/settings')}"><router-link to="/dashboard/settings">Settings</router-link></li>
           </ul>
           <ul class="nav navbar-nav navbar-right">
-            <li>
-              <a>{{ user.name }}</a>
-            </li>
-            <li>
-              <a @click="logout" href="#">
-                <span class="glyphicon glyphicon-log-in"></span> Logout
+            <li class="dropdown">
+              <a class="dropdown-toggle" data-toggle="dropdown" role="button">
+                <img src="/static/favicon.ico"/>
+                {{ user.name }}
+                <span class="caret"></span>
               </a>
+              <ul class="dropdown-menu">
+                <li><router-link to="/dashboard/account">My Account</router-link></li>
+                <li><router-link to="/dashboard/settings">Settings</router-link></li>
+                <li class="divider"></li>
+                <li>
+                  <a @click="logout" href="#">
+                  <span class="glyphicon glyphicon-log-in"></span> Logout
+                  </a>
+                </li>
+              </ul>
             </li>
           </ul>
         </div>

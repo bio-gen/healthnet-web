@@ -1,7 +1,7 @@
 <template>
   <div id="app">
     <top></top>
-    <main>
+    <main class="container-fluid">
       <router-view></router-view>
     </main>
     <bottom></bottom>
@@ -21,7 +21,7 @@ export default {
 
 <style>
 main {
-  margin-top: 100px;
+  margin-top: 80px;
   margin-bottom: 40px;
 }
 

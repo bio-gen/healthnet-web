@@ -6,6 +6,7 @@ import router from '@/router'
 const API_URL = 'http://healthnetz.herokuapp.com/v1/'
 const LOGIN_URL = API_URL + 'auth/'
 const SIGNUP_URL = API_URL + 'users/'
+const UPDATE_USER_URL = API_URL + 'users/'
 
 export default {
 
@@ -138,6 +139,41 @@ export default {
     localStorage.removeItem('user')
     this.user.clear()
     router.push(redirect)
+  },
+
+  /**
+   * @summary Send a request to the update user URL
+   * {
+   *   "data": {
+   *     "type": "users",
+   *     "attributes": {
+   *       "email": "user@user.com",
+   *       "password": "user123",
+   *       "password_confirmation": "user123"
+   *     }
+   *   }
+   * }
+   */
+  updateUser (context, userId, creds) {
+    var url = UPDATE_USER_URL + userId
+    context.$http.put(url, creds, this.postOptions).then(response => {
+      context.loading = false
+      var err = this.handleErrors(response.body)
+      if (!err) {
+        context.successMsg = 'User information updated successfully.'
+      } else {
+        context.error = err
+      }
+    }, response => {
+      context.loading = false
+      if (response.status === 422) {
+        if (response.data.password_confirmation) {
+          context.error = 'Passwords do not match.'
+        }
+      } else {
+        context.error = response.status + '-' + response.data
+      }
+    })
   },
 
   checkAuth () {

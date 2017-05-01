@@ -11,6 +11,7 @@ import Meeting from '@/components/dashboard/Meeting'
 import Inbox from '@/components/dashboard/Inbox'
 import Notifications from '@/components/dashboard/Notifications'
 import Settings from '@/components/dashboard/Settings'
+import Account from '@/components/dashboard/Account'
 
 export default new Router({
   mode: 'history',
@@ -59,6 +60,11 @@ export default new Router({
           path: 'settings',
           name: 'settings',
           component: Settings
+        },
+        {
+          path: 'account',
+          name: 'account',
+          component: Account
         }
       ]
     },
