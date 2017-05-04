@@ -29,7 +29,7 @@
             </div>
 
             <div class="form-group">
-              <label for="password">Password</label>
+              <label for="password">Password Confirmation</label>
               <input type="password" class="form-control" id="confirm-password"
                 name="confirm-password" placeholder="Confirm Password"
                 v-model="credentials.passwordConfirmation" required>
@@ -86,7 +86,7 @@ export default {
       }
       // We need to pass the component's this context
       // to properly make use of http in the auth service
-      auth.signup(this, credentials, 'dashboard')
+      auth.signup(this, credentials, '/')
     }
   },
   computed: {

@@ -1,6 +1,13 @@
 <template>
   <div class="not-found">
-    <h1>Not Found</h1>
+    <div class ="container-fluid">
+      <div class="jumbotron">
+        <div class="container text-center">
+          <h1>{{ header }}</h1>
+          <p>{{ msg }}</p>
+        </div>
+      </div>
+    </div>
   </div>
 </template>
 
@@ -12,7 +19,8 @@ export default {
   },
   data () {
     return {
-      msg: 'Not found component'
+      header: 'Not found',
+      msg: 'The page you are looking for does not exist.'
     }
   }
 }

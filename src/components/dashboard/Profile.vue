@@ -1,19 +1,33 @@
 <template>
   <div class="profile">
-    <div class="jumbotron">
-      <div class="container text-center">
-        <h1>{{ user.name }}</h1>
-        <p>Student/Degree/Specialization</p>
-        <p>Institution</p>
-        <p>Location</p>
+    <div class ="container-fluid">
+      <div class="jumbotron">
+        <div class="container text-center">
+          <h1>{{ name }}</h1>
+          <p>Student / Degree / Specialization</p>
+          <p>Institution</p>
+          <p>Location</p>
+        </div>
       </div>
     </div>
 
-    <div class="container-fluid bg-3 text-center">
-      <h3>Experience</h3><br>
-      <div class="row">
-        <div class="col-sm-12">
-          <p>Some text.</p>
+    <div class="container-fluid bg-3">
+      <div class="panel-group">
+        <div class="panel panel-default">
+          <div class="panel-heading">
+            <h3 class="panel-title">
+              <a data-toggle="collapse" href="#experienceList">
+                Experience
+              </a>
+            </h3>
+          </div>
+          <div id="experienceList" class="panel-collapse collapse in">
+            <ul class="list-group">
+              <li class="list-group-item">Experience 1</li>
+              <li class="list-group-item">Experience 2</li>
+              <li class="list-group-item">Experience 3</li>
+            </ul>
+          </div>
         </div>
       </div>
     </div>
@@ -35,6 +49,12 @@ export default {
   },
   methods: {
 
+  },
+  computed: {
+    name () {
+      var name = this.user.name.substring(0, this.user.name.indexOf('@'))
+      return name.charAt(0).toUpperCase() + name.slice(1)
+    }
   }
 }
 </script>

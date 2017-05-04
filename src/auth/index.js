@@ -46,10 +46,9 @@ export default {
 
   /**
    * @summary Send a request to the login URL and save the returned JWT
-   * {
+   * "auth": {
    *   email": "user@user.com",
-   *   "password": "user123",
-   *   "password_confirmation": "user123"
+   *   "password": "user123"
    * }
    */
   login (context, creds, redirect) {
@@ -57,12 +56,16 @@ export default {
       context.loading = false
       var err = this.handleErrors(response.body)
       if (!err) {
-        localStorage.setItem('id_token', response.body.auth_token)
+        localStorage.setItem('jwt', response.body.jwt)
 
         this.user.setUserArgs(
-          response.body.user.id,
-          response.body.user.email,
-          response.body.user.email,
+          // response.body.user.id,
+          // response.body.user.email,
+          // response.body.user.email,
+          // true
+          -1,
+          creds.auth.email,
+          creds.auth.email,
           true
         )
         localStorage.setItem('user', JSON.stringify(this.user))
@@ -76,10 +79,12 @@ export default {
       }
     }, response => {
       context.loading = false
-      if (response.status === 500) {
+      if (response.status === 404) {
         context.error = 'User does not exist'
       } else {
-        context.error = response.status + '-' + response.data
+        context.error = 'There was an error processing your request (' +
+            response.status + ' - ' + response.data + '). Please contact the ' +
+            'system administrator.'
       }
     })
   },
@@ -102,15 +107,15 @@ export default {
       context.loading = false
       var err = this.handleErrors(response.body)
       if (!err) {
-        localStorage.setItem('id_token', response.body.auth_token)
+        // localStorage.setItem('jwt', response.body.jwt)
 
-        this.user.setUserArgs(
-          response.body.user.id,
-          response.body.user.email,
-          response.body.user.email,
-          true
-        )
-        localStorage.setItem('user', JSON.stringify(this.user))
+        // this.user.setUserArgs(
+        //   response.body.data.id,
+        //   response.body.data.attributes.email,
+        //   response.body.data.attributes.email,
+        //   false
+        // )
+        // localStorage.setItem('user', JSON.stringify(this.user))
 
         // Redirect to a specified route
         if (redirect) {
@@ -128,14 +133,16 @@ export default {
           context.error = 'A user with this email already exists.'
         }
       } else {
-        context.error = response.status + '-' + response.data
+        context.error = 'There was an error processing your request (' +
+            response.status + ' - ' + response.data + '). Please contact the ' +
+            'system administrator.'
       }
     })
   },
 
   // To log out, we just need to remove the token and user info
   logout (redirect) {
-    localStorage.removeItem('id_token')
+    localStorage.removeItem('jwt')
     localStorage.removeItem('user')
     this.user.clear()
     router.push(redirect)
@@ -177,7 +184,7 @@ export default {
   },
 
   checkAuth () {
-    var jwt = localStorage.getItem('id_token')
+    var jwt = localStorage.getItem('jwt')
     if (jwt == null) {
       this.user.clear()
     } else {
@@ -197,7 +204,7 @@ export default {
   // The object to be passed as a header for authenticated requests
   getAuthHeader () {
     return {
-      'Authorization': 'Bearer ' + localStorage.getItem('id_token')
+      'Authorization': 'Bearer ' + localStorage.getItem('jwt')
     }
   },
 

@@ -21,6 +21,7 @@ export default {
 <!-- Add "scoped" attribute to limit CSS to this component only -->
 <style scoped>
 footer {
+  padding-top: 10px;
   background-color: #f2f2f2;
 }
 </style>

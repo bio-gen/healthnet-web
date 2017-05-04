@@ -28,7 +28,7 @@
             </div>
 
             <div class="form-group">
-              <label for="password">Password</label>
+              <label for="password">Password Confirmation</label>
               <input type="password" class="form-control" id="confirm-password"
                 name="confirm-password" placeholder="Confirm Password"
                 v-model="credentials.passwordConfirmation" required>

@@ -3,7 +3,7 @@
     <nav class="navbar navbar-inverse navbar-fixed-top">
       <div class="container-fluid">
         <div class="navbar-header">
-          <button type="button" class="navbar-toggle" data-toggle="collapse"
+          <button v-if="user.authenticated" type="button" class="navbar-toggle" data-toggle="collapse"
             data-target="#myNavbar">
             <span class="icon-bar"></span>
             <span class="icon-bar"></span>
@@ -12,27 +12,73 @@
           <a class="navbar-brand" href="/">Our Icon</a>
         </div>
         <div v-if="user.authenticated" class="collapse navbar-collapse" id="myNavbar">
-          <ul class="nav navbar-nav">
-            <li v-bind:class="{active: isActive('/dashboard')}"><router-link to="/dashboard">Home</router-link></li>
-            <li v-bind:class="{active: isActive('/dashboard/profile')}"><router-link to="/dashboard/profile">Profile</router-link></li>
-            <li v-bind:class="{active: isActive('/dashboard/meeting')}"><router-link to="/dashboard/meeting">Meeting</router-link></li>
-            <li v-bind:class="{active: isActive('/dashboard/inbox')}"><router-link to="/dashboard/inbox">Inbox</router-link></li>
-            <li v-bind:class="{active: isActive('/dashboard/notifications')}"><router-link to="/dashboard/notifications">Notifications</router-link></li>
-          </ul>
-          <ul class="nav navbar-nav navbar-right">
-            <li class="dropdown">
+
+          <form class="navbar-form navbar-left">
+            <div class="input-group">
+              <input type="text" class="form-control" placeholder="Search">
+              <div class="input-group-btn">
+                <button class="btn btn-default" type="submit">
+                  <i class="glyphicon glyphicon-search"></i>
+                </button>
+              </div>
+            </div>
+          </form>
+
+          <ul class="nav navbar-nav navbar-right small">
+            <li v-bind:class="{active: isActive('/dashboard')}">
+              <router-link to="/dashboard">
+                <i class="glyphicon glyphicon-home"></i><br/>
+                Home
+              </router-link>
+            </li>
+            <li v-bind:class="{active: isActive('/dashboard/profile')}">
+              <router-link to="/dashboard/profile">
+                <i class="glyphicon glyphicon-user"></i><br/>
+                Profile
+              </router-link>
+            </li>
+            <li v-bind:class="{active: isActive('/dashboard/meeting')}">
+              <router-link to="/dashboard/meeting">
+                <i class="glyphicon glyphicon-comment"></i><br/>
+                Meeting
+              </router-link>
+            </li>
+            <li v-bind:class="{active: isActive('/dashboard/inbox')}">
+              <router-link to="/dashboard/inbox">
+                <i class="glyphicon glyphicon-envelope"></i><br/>
+                Inbox
+              </router-link>
+            </li>
+            <li v-bind:class="{active: isActive('/dashboard/notifications')}">
+              <router-link to="/dashboard/notifications">
+                <i class="glyphicon glyphicon-bell"></i><br/>
+                Alerts
+              </router-link>
+            </li>
+            <li v-bind:class="{active: isActive('/dashboard/account', '/dashboard/settings')}"
+                class="dropdown">
               <a class="dropdown-toggle" data-toggle="dropdown" role="button">
-                <img src="/static/favicon.ico"/>
-                {{ user.name }}
-                <span class="caret"></span>
+                <div id="userDropdown">
+                  <img id="avatar" class="img-rounded" :src="userAvatar"/>
+                  <!-- {{ user.name }} -->
+                  <span class="caret"></span>
+                </div>
               </a>
               <ul class="dropdown-menu">
-                <li><router-link to="/dashboard/account">My Account</router-link></li>
-                <li><router-link to="/dashboard/settings">Settings</router-link></li>
+                <li>
+                  <router-link to="/dashboard/account">
+                    <span class="glyphicon glyphicon-lock"></span>&nbsp;&nbsp;My Account
+                  </router-link>
+                </li>
+                <li>
+                  <router-link to="/dashboard/settings">
+                    <span class="glyphicon glyphicon-cog"></span>&nbsp;&nbsp;Settings
+                  </router-link>
+                </li>
                 <li class="divider"></li>
                 <li>
                   <a @click="logout" href="#">
-                  <span class="glyphicon glyphicon-log-in"></span> Logout
+                    <span class="glyphicon glyphicon-log-out"></span>&nbsp;&nbsp;Logout
                   </a>
                 </li>
               </ul>
@@ -58,15 +104,22 @@ export default {
 
   },
   methods: {
-    isActive: function (r) {
-      return this.$route.path === r
+    isActive: function (...routes) {
+      for (var route of routes) {
+        if (this.$route.path === route) {
+          return true
+        }
+      }
+      return false  // If none of the routes matches
     },
     logout: function () {
       auth.logout('/')
     }
   },
   computed: {
-
+    userAvatar () {
+      return '/static/user-md.png'
+    }
   }
 }
 </script>
@@ -76,5 +129,31 @@ export default {
 .top {
   margin-bottom: 0;
   border-radius: 0;
+}
+
+#userDropdown {
+  padding-top: 7px;
+}
+
+#avatar {
+  height: 19px;
+  margin-right: 5px;
+}
+
+.nav li {
+  text-align: center;
+}
+
+.nav a {
+  height: 50px;
+  padding-top: 5px;
+}
+
+.dropdown-menu a {
+  height: 30px;
+}
+
+.dropdown ul li {
+  text-align: left;
 }
 </style>
