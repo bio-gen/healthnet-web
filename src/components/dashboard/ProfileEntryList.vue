@@ -1,10 +1,10 @@
 <template>
   <div class="profile-entry-list">
     <div class="container-fluid bg-3">
-      <div class="alert alert-danger fade" v-if="error">
+      <div class="alert alert-danger" v-if="error">
         <p>{{ error }}</p>
       </div>
-      <div class="alert alert-success alert-dismissable fade" v-if="successMsg">
+      <div class="alert alert-success alert-dismissable" v-if="successMsg">
         <a href="#" class="close" data-dismiss="alert" aria-label="close">&times;</a>
         <strong>Success!</strong> {{ successMsg }}
       </div>
@@ -17,7 +17,8 @@
                   :class="{'collapsed': entries.length == 0}">
                 {{ heading }}
               </a>
-              <a title="New entry" role="button" v-on:click="addEntry">
+              <a title="New entry" role="button" v-on:click="addEntry"
+                 data-toggle="collapse">
                 <i class="fa fa-plus-circle"></i>
               </a>
               <i v-if="loading" class="fa fa-spinner fa-spin"></i>
