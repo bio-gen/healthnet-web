@@ -5,9 +5,6 @@
     		<div class="col-md-4 col-md-offset-4">
     			<h2>Login</h2>
           <p>Log in to your account or <router-link to="/signup">Sign up</router-link>.</p>
-          <div class="alert alert-danger" v-if="error">
-            <p>{{ error }}</p>
-          </div>
 
           <form @submit="login">
   					<div class="form-group">
@@ -28,14 +25,17 @@
             </div>
 
             <div class="form-group row">
-              <div class="offset-sm-2 col-sm-10">
+              <div class="offset-md-2 col-md-10">
                 <button type="submit" class="btn btn-primary">
                   <i v-if="loading" class="fa fa-spinner fa-spin"></i>
-                  <span v-else>Submit</span>
+                  <span v-else>Log In</span>
                 </button>
               </div>
             </div>
           </form>
+          <div class="alert alert-danger" v-if="error">
+            <p>{{ error }}</p>
+          </div>
   			</div>
   		</div>
   	</div>
@@ -59,7 +59,7 @@ export default {
     }
   },
   methods: {
-    login: function (e) {
+    login (e) {
       this.loading = true
       e.preventDefault()
       var credentials = {

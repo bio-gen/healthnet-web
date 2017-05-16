@@ -1,22 +1,25 @@
 <template>
-  <div class="signup">
-    <account-form type="create"></account-form>
+  <div class="edit-account">
+    <account-form type="update"></account-form>
   </div>
 </template>
 
 <script>
 import auth from '@/auth'
-import router from '@/router'
 import AccountForm from '@/components/dashboard/AccountForm'
 export default {
-  name: 'signup',
+  name: 'editAccount',
   components: {
     AccountForm
   },
   data () {
     return {
-      msg: 'SignUp component'
+      msg: 'Edit account component',
+      user: auth.user
     }
+  },
+  props: {
+
   },
   methods: {
 
@@ -25,9 +28,7 @@ export default {
 
   },
   mounted () {
-    if (auth.user.authenticated) {
-      router.push('dashboard')
-    }
+
   }
 }
 </script>

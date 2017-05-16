@@ -66,7 +66,13 @@
               </a>
               <ul class="dropdown-menu">
                 <li>
-                  <router-link to="/dashboard/account">
+                  <router-link to="/dashboard/profile">
+                    {{ user.email }}
+                  </router-link>
+                </li>
+                <li class="divider"></li>
+                <li>
+                  <router-link to="/dashboard/edit-account">
                     <span class="glyphicon glyphicon-lock"></span>&nbsp;&nbsp;My Account
                   </router-link>
                 </li>
@@ -104,7 +110,7 @@ export default {
 
   },
   methods: {
-    isActive: function (...routes) {
+    isActive (...routes) {
       for (var route of routes) {
         if (this.$route.path === route) {
           return true
@@ -112,7 +118,7 @@ export default {
       }
       return false  // If none of the routes matches
     },
-    logout: function () {
+    logout () {
       auth.logout('/')
     }
   },
