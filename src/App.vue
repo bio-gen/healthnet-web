@@ -21,8 +21,18 @@ export default {
 
 <style>
 main {
+  font-family: Candara, "Segoe UI";
   margin-top: 80px;
   margin-bottom: 40px;
+}
+
+main a:hover {
+  text-decoration: none;
+  text-shadow: 2px 2px 1px #D3D3D3;
+}
+
+main a:link {
+  text-decoration: none;
 }
 
 .btn.btn-primary {

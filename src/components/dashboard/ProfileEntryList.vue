@@ -15,21 +15,20 @@
               <a class="h3 accordion-toggle" data-toggle="collapse"
                  title="Toggle hide/show" :href="'#' + type + 'List'"
                   :class="{'collapsed': entries.length == 0}">
-                <i class="fa" :class="headingIcon"></i>
+                <i v-if="loading" class="fa fa-spinner fa-spin"></i>
+                <i v-else class="fa" :class="headingIcon"></i>
+                &nbsp;
                 {{ heading }}
               </a>
-              <i v-if="loading" class="fa fa-spinner fa-spin"></i>
             </h3>
+            <a title="New entry" role="button" v-on:click="addEntry"
+             data-toggle="collapse" class="add">
+              Add
+              <i class="fa fa-plus-circle"></i>
+            </a>
           </div>
           <div :id="type + 'List'" class="panel-collapse collapse in">
             <ul class="list-group">
-              <li class="list-group-item">
-                <a title="New entry" role="button" v-on:click="addEntry"
-                 data-toggle="collapse">
-                  Add
-                  <i class="fa fa-plus-circle"></i>
-                </a>
-              </li>
               <li class="list-group-item" v-if="newEntry">
                 <profileEntry :type="type" entryTypeProp="create"
                   :user="user" @cancel="newEntry = false" @save="saveEntry">
@@ -139,7 +138,12 @@ export default {
     content: "\e080";    /* adjust as needed, taken from bootstrap.css */
   }
 
-  i {
-    color: navy;
+  .panel-title {
+    margin-bottom: 7px;
+  }
+
+  .add {
+    border-top: 1px solid #D3D3D3;
+    padding-top: 5px;
   }
 </style>

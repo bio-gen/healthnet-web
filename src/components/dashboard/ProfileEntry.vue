@@ -263,8 +263,4 @@ export default {
   .form-group {
     margin-bottom: 0;
   }
-
-  i {
-    color: navy;
-  }
 </style>
