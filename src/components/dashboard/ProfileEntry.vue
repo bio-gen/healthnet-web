@@ -7,20 +7,25 @@
       <div class="panel" v-bind:class="entryType === 'read' ? 'panel-default' : 'panel-primary'">
   		  <div class="panel-heading">
   		    <a v-if="entryType === 'read'" title="Delete entry"
-  		       v-on:click="deleteEntry(entry, entryKey)" role="button">
+  		       v-on:click="deleteEntry" role="button">
   		      <i v-if="deleting" class="fa fa-spinner fa-spin pull-right"></i>
   		      <i v-else class="fa fa-trash pull-right"></i>
+  		    </a>
+  		    <a v-if="entryType === 'read'" title="Edit entry"
+  		       v-on:click="editEntry" role="button">
+  		      <i v-if="saving" class="fa fa-spinner fa-spin pull-right"></i>
+  		      <i v-else class="fa fa-pencil pull-right"></i>
   		    </a>
   				<h4 class="panel-title">
 					  <div class="form-group">
               <label for="title" class="sr-only">Title:</label>
               <strong v-if="entryType === 'read'">{{ entry.attributes.title }}</strong>
               <input v-else type="text" class="form-control" id="title"
-                placeholder="Title" v-model="thisEntry.title" required>
+                placeholder="Title" v-model="thisEntry.attributes.title" required>
             </div>
   				</h4>
   		  </div>
-  		  <div :id="type + entryKey">
+  		  <div>
   				<div class="panel-body">
   				  <ul class="list-group">
               <li class="list-group-item row">
@@ -31,7 +36,7 @@
                       {{ entry.attributes.company }}
                     </span>
                     <input v-else type="text" class="form-control" id="company"
-                      placeholder="Organization name" v-model="thisEntry.company" required>
+                      placeholder="Organization name" v-model="thisEntry.attributes.company" required>
                   </div>
                 </div>
                 <div class="col-md-6">
@@ -41,7 +46,7 @@
                       {{ entry.attributes.location }}
                     </span>
                     <input v-else type="text" class="form-control" id="location"
-                      placeholder="City/Country" v-model="thisEntry.location" required>
+                      placeholder="City/Country" v-model="thisEntry.attributes.location" required>
                   </div>
                 </div>
               </li>
@@ -53,7 +58,7 @@
                       {{ entry.attributes.start_date }}
                     </span>
                     <input v-else type="text" class="form-control" id="startDate"
-                      placeholder="yyyy-mm-dd" v-model="thisEntry.start_date" required>
+                      placeholder="yyyy-mm-dd" v-model="thisEntry.attributes.start_date" required>
                   </div>
                 </div>
                 <div class="col-md-6">
@@ -64,10 +69,10 @@
                     </span>
                     <div class="form-group" v-else>
                       <input type="text" class="form-control" id="endDate"
-                        placeholder="yyyy-mm-dd" v-model="thisEntry.end_date" ref="endDate">
+                        placeholder="yyyy-mm-dd" v-model="thisEntry.attributes.end_date" ref="endDate">
                       <div class="checkbox">
                         <label>
-                          <input type="checkbox" v-model="thisEntry.current"
+                          <input type="checkbox" v-model="thisEntry.attributes.current"
                             ref="current" v-on:change="makeCurrent()">
                           Current
                         </label>
@@ -83,7 +88,7 @@
                     {{ entry.attributes.description }}
                   </span>
                   <textarea v-else class="form-control" id="description" rows="3"
-                    placeholder="Description" v-model="thisEntry.description" required>
+                    placeholder="Description" v-model="thisEntry.attributes.description" required>
                   </textarea>
                 </div>
               </li>
@@ -122,14 +127,19 @@ export default {
     return {
       deleting: false,
       saving: false,
+      entryType: this.entryTypeProp,  // create, read, update
       thisEntry: {
-        title: '',
-        company: '',
-        location: '',
-        start_date: '',
-        end_date: '',
-        current: false,
-        description: ''
+        id: -1,
+        type: 'work_experiences',
+        attributes: {
+          title: '',
+          company: '',
+          location: '',
+          start_date: '',
+          end_date: '',
+          current: false,
+          description: ''
+        }
       },
       error: ''
     }
@@ -139,16 +149,12 @@ export default {
       type: String,
       required: true
     },
-    entryType: {  // create, read, update
+    entryTypeProp: {  // create, read
       type: String,
       required: true
     },
     entry: {
       type: Object,
-      required: false
-    },
-    entryKey: {
-      type: Number,
       required: false
     },
     user: {
@@ -161,14 +167,14 @@ export default {
       return this.entry.attributes.current || this.entry.attributes.end_date == null
           ? 'Present' : this.entry.attributes.end_date
     },
-    deleteEntry (entry, key) {
+    deleteEntry () {
       util.confirmDialog('Delete Entry',
         'Are you sure you want to delete this entry?', 'small',
         () => {
           this.deleting = true
           switch (this.type) {
             case 'experience':
-              profile.deleteExperience(this, this.user.id, entry.id, (response) => {
+              profile.deleteExperience(this, this.user.id, this.entry.id, (response) => {
                 this.error = ''
                 this.deleting = false
                 this.$emit('delete', true)
@@ -178,29 +184,53 @@ export default {
         }
       )
     },
+    editEntry () {
+      this.entryType = 'update'
+      this.thisEntry = this.entry
+    },
     saveEntry (e) {
       e.preventDefault()
       this.saving = true
       switch (this.type) {
         case 'experience':
-          profile.createExperience(this, this.user.id, this.thisEntry, (response) => {
-            this.saving = false
-            this.error = ''
-            var newEntry = response.body.data
-            this.$emit('saveEntry', newEntry)
-          }, (response) => {
-            this.saving = false
-            if (response.status === 422) {
-              this.error = 'Incorrect data input.'
-            } else {
-              this.error = 'Server error (' + response.status + ').'
-            }
-          })
+          if (this.entryType === 'create') {
+            profile.createExperience(this, this.user.id, this.thisEntry.attributes, (response) => {
+              this.saving = false
+              this.error = ''
+              var newEntry = response.body.data
+              this.$emit('save', newEntry)
+            }, (response) => {
+              this.saving = false
+              if (response.status === 422) {
+                this.error = 'Incorrect data input.'
+              } else {
+                this.error = 'Server error (' + response.status + ').'
+              }
+            })
+          } else { // update
+            profile.updateExperience(this, this.user.id, this.thisEntry.id, this.thisEntry.attributes, (response) => {
+              this.saving = false
+              this.error = ''
+              this.entryType = 'read'
+              this.$emit('update')
+            }, (response) => {
+              this.saving = false
+              if (response.status === 422) {
+                this.error = 'Incorrect data input.'
+              } else {
+                this.error = 'Server error (' + response.status + ').'
+              }
+            })
+          }
           break
       }
     },
     cancel () {
-      this.$emit('cancel', true)
+      if (this.entryType === 'create') {
+        this.$emit('cancel', true)
+      } else {
+        this.entryType = 'read'
+      }
     },
     makeCurrent () {
       var checkbox = this.$refs.current
@@ -232,5 +262,9 @@ export default {
 
   .form-group {
     margin-bottom: 0;
+  }
+
+  i {
+    color: navy;
   }
 </style>

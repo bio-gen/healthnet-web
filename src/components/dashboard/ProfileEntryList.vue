@@ -15,25 +15,29 @@
               <a class="h3 accordion-toggle" data-toggle="collapse"
                  title="Toggle hide/show" :href="'#' + type + 'List'"
                   :class="{'collapsed': entries.length == 0}">
+                <i class="fa" :class="headingIcon"></i>
                 {{ heading }}
-              </a>
-              <a title="New entry" role="button" v-on:click="addEntry"
-                 data-toggle="collapse">
-                <i class="fa fa-plus-circle"></i>
               </a>
               <i v-if="loading" class="fa fa-spinner fa-spin"></i>
             </h3>
           </div>
           <div :id="type + 'List'" class="panel-collapse collapse in">
             <ul class="list-group">
+              <li class="list-group-item">
+                <a title="New entry" role="button" v-on:click="addEntry"
+                 data-toggle="collapse">
+                  Add
+                  <i class="fa fa-plus-circle"></i>
+                </a>
+              </li>
               <li class="list-group-item" v-if="newEntry">
-                <profileEntry :type="type" entryType="create" :user="user"
-                  @cancel="newEntry = false" @saveEntry="saveEntry">
+                <profileEntry :type="type" entryTypeProp="create"
+                  :user="user" @cancel="newEntry = false" @save="saveEntry">
                 </profileEntry>
               </li>
               <li v-for="(entry, key) in entries" class="list-group-item">
-          			<profileEntry :type="type" entryType="read" :entry="entry" :entryKey="key"
-          			  :user="user" @delete="deleteEntry(key)">
+          			<profileEntry :type="type" entryTypeProp="read" :entry="entry"
+          			  :user="user" @delete="deleteEntry(key)" @update="updateEntry">
           			</profileEntry>
         		  </li>
             </ul>
@@ -83,11 +87,26 @@ export default {
       this.entries.unshift(entry)
       this.newEntry = false
       this.successMsg = 'Entry added successfully.'
+    },
+    updateEntry () {
+      this.successMsg = 'Entry updated successfully.'
     }
   },
   computed: {
     heading () {
       return this.type.charAt(0).toUpperCase() + this.type.slice(1)
+    },
+    headingIcon () {
+      switch (this.type) {
+        case 'experience':
+          return 'fa-briefcase'
+        case 'education':
+          return 'fa-graduation-cap'
+        case 'certificates':
+          return 'fa-certificate'
+        case 'affiliations':
+          return 'fa-globe'
+      }
     }
   },
   mounted () {
@@ -121,6 +140,6 @@ export default {
   }
 
   i {
-    color: grey;
+    color: navy;
   }
 </style>

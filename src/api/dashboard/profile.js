@@ -35,18 +35,13 @@ export default {
    * @param {Number} userId - The ID of the user
    * @param {Object} data
    * {
-   *   "data": {
-   *     "type": "work_experiences",
-   *     "attributes": {
-   *       "title": "Software Engineer",
-   *       "company": "Apple",
-   *       "location": "USA",
-   *       "start_date": "2017-05-08",
-   *       "end_date": "2017-05-08",
-   *       "current": true,
-   *       "description": "Job description"
-   *     }
-   *   }
+   *   "title": "Software Engineer",
+   *   "company": "Apple",
+   *   "location": "USA",
+   *   "start_date": "2017-05-08",
+   *   "end_date": "2017-05-08",
+   *   "current": true,
+   *   "description": "Job description"
    * }
    * @callback successCallback - Callback function if operation succeeded (required)
    * @callback errorCallback - Callback function if operation failed
@@ -60,6 +55,35 @@ export default {
       }
     }
     api.postEndpoint(context, experienceURL, fullData, successCallback, errorCallback)
+  },
+
+  /**
+   * @summary Update a Work Experience entry
+   * @param {Object} context - The Vue component where this method is being called from
+   * @param {Number} userId - The ID of the user
+   * @param {Number} experienceId - The ID of the experience to update
+   * @param {Object} data
+   * {
+   *   "title": "Software Engineer",
+   *   "company": "Apple",
+   *   "location": "USA",
+   *   "start_date": "2017-05-08",
+   *   "end_date": "2017-05-08",
+   *   "current": true,
+   *   "description": "Job description"
+   * }
+   * @callback successCallback - Callback function if operation succeeded (required)
+   * @callback errorCallback - Callback function if operation failed
+   */
+  updateExperience (context, userId, experienceId, data, successCallback, errorCallback) {
+    var experienceURL = this.getExperienceURL(userId, experienceId)
+    var fullData = {
+      'data': {
+        'type': 'work_experiences',
+        'attributes': data
+      }
+    }
+    api.patchEndpoint(context, experienceURL, fullData, successCallback, errorCallback)
   },
 
   /**

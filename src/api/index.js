@@ -23,6 +23,12 @@ export default {
     }
   },
 
+  PUT_OPTIONS: {
+    headers: {
+      'Content-Type': 'application/json'
+    }
+  },
+
   errorMap: {
     404: 'Not found.',
     422: 'Data entry error'
@@ -84,7 +90,33 @@ export default {
    * }
    */
   postEndpoint (context, url, data, successCallback, errorCallback, customErrorMap) {
-    context.$http.post(url, data, this.DELETE_OPTIONS).then(response => {
+    context.$http.post(url, data, this.POST_OPTIONS).then(response => {
+      successCallback(response)  // Required
+    }, response => {
+      if (errorCallback) {
+        errorCallback(response)
+      } else {
+        this.logError(context, response.status, customErrorMap)
+      }
+    })
+  },
+
+  /**
+   * @summary PATCH operation from API
+   * @param context - The Vue component where this method is being called from
+   * @param {String} url - The URL of the endpoint
+   * @param {Object} data - The data to send in the POST body
+   * @callback successCallback - Callback function if operation succeeded (required)
+   * @callback errorCallback - Callback function if operation failed
+   * @param {Object} customErrorMap - An object mapping http error codes with text messages
+   * Example:
+   * {
+   *   404: 'Not found',
+   *   500: 'There was an error in the server.'
+   * }
+   */
+  patchEndpoint (context, url, data, successCallback, errorCallback, customErrorMap) {
+    context.$http.patch(url, data, this.PATCH_OPTIONS).then(response => {
       successCallback(response)  // Required
     }, response => {
       if (errorCallback) {
