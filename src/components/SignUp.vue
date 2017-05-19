@@ -7,7 +7,7 @@
 <script>
 import auth from '@/auth'
 import router from '@/router'
-import AccountForm from '@/components/dashboard/AccountForm'
+import AccountForm from '@/components/dashboard/account/AccountForm'
 export default {
   name: 'signup',
   components: {

@@ -6,7 +6,7 @@
 
 <script>
 import auth from '@/auth'
-import AccountForm from '@/components/dashboard/AccountForm'
+import AccountForm from '@/components/dashboard/account/AccountForm'
 export default {
   name: 'editAccount',
   components: {

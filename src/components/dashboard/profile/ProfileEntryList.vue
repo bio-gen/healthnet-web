@@ -30,14 +30,20 @@
           <div :id="type + 'List'" class="panel-collapse collapse in">
             <ul class="list-group">
               <li class="list-group-item" v-if="newEntry">
-                <profileEntry :type="type" entryTypeProp="create"
+                <experienceEntry v-if="type === 'experience'" entryTypeProp="create"
                   :user="user" @cancel="newEntry = false" @save="saveEntry">
-                </profileEntry>
+                </experienceEntry>
+                <educationEntry v-else-if="type === 'education'" entryTypeProp="create"
+                  :user="user" @cancel="newEntry = false" @save="saveEntry">
+                </educationEntry>
               </li>
               <li v-for="(entry, key) in entries" class="list-group-item">
-          			<profileEntry :type="type" entryTypeProp="read" :entry="entry"
+          			<experienceEntry v-if="type === 'experience'" entryTypeProp="read" :entry="entry"
           			  :user="user" @delete="deleteEntry(key)" @update="updateEntry">
-          			</profileEntry>
+          			</experienceEntry>
+          			<educationEntry v-else-if="type === 'education'" entryTypeProp="read" :entry="entry"
+          			  :user="user" @delete="deleteEntry(key)" @update="updateEntry">
+          			</educationEntry>
         		  </li>
             </ul>
           </div>
@@ -49,11 +55,12 @@
 
 <script>
 import profile from '@/api/dashboard/profile'
-import ProfileEntry from '@/components/dashboard/ProfileEntry'
+import ExperienceEntry from '@/components/dashboard/profile/ExperienceEntry'
+import EducationEntry from '@/components/dashboard/profile/EducationEntry'
 export default {
   name: 'profileEntryList',
   components: {
-    ProfileEntry
+    ExperienceEntry, EducationEntry
   },
   data () {
     return {
@@ -65,7 +72,7 @@ export default {
     }
   },
   props: {
-    type: {
+    type: {  // experience, education, certificates, affiliations
       type: String,
       required: true
     },
@@ -112,6 +119,14 @@ export default {
     switch (this.type) {
       case 'experience':
         profile.getExperienceList(this, this.user.id, (response) => {
+          for (const item of response.body.data) {
+            this.entries.push(item)
+          }
+          this.loading = false
+        })
+        break
+      case 'education':
+        profile.getEducationList(this, this.user.id, (response) => {
           for (const item of response.body.data) {
             this.entries.push(item)
           }

@@ -17,6 +17,14 @@ export default {
     return url
   },
 
+  getEducationURL (userId, educationId) {
+    var url = USER_URL + userId + '/' + 'educations/'
+    if (educationId) {
+      url += educationId + '/'
+    }
+    return url
+  },
+
   /**
    * @summary Get Work Experience list
    * @param context - The Vue component where this method is being called from
@@ -96,5 +104,84 @@ export default {
   deleteExperience (context, userId, experienceId, successCallback) {
     var experienceURL = this.getExperienceURL(userId, experienceId)
     api.deleteEndpoint(context, experienceURL, successCallback)
+  },
+
+  /**
+   * @summary Get Education list
+   * @param context - The Vue component where this method is being called from
+   * @param {Number} userId - The ID of the user
+   * @callback successCallback - Callback function if operation succeeded (required)
+   */
+  getEducationList (context, userId, successCallback) {
+    context.loading = true
+    var educationURL = this.getEducationURL(userId)
+    api.getEndpoint(context, educationURL, successCallback)
+  },
+
+  /**
+   * @summary Create a new Education entry
+   * @param {Object} context - The Vue component where this method is being called from
+   * @param {Number} userId - The ID of the user
+   * @param {Object} data
+   * {
+   *   "degree": "Software Engineer",
+   *   "school": "Harvard",
+   *   "field": "Computer Science",
+   *   "from_year": "2012",
+   *   "to_year": "2013-05-08",
+   *   "description": "Education description"
+   * }
+   * @callback successCallback - Callback function if operation succeeded (required)
+   * @callback errorCallback - Callback function if operation failed
+   */
+  createEducation (context, userId, data, successCallback, errorCallback) {
+    var educationURL = this.getEducationURL(userId)
+    var fullData = {
+      'data': {
+        'type': 'educations',
+        'attributes': data
+      }
+    }
+    api.postEndpoint(context, educationURL, fullData, successCallback, errorCallback)
+  },
+
+  /**
+   * @summary Update an Education entry
+   * @param {Object} context - The Vue component where this method is being called from
+   * @param {Number} userId - The ID of the user
+   * @param {Number} educationId - The ID of the education to update
+   * @param {Object} data
+   * {
+   *   "degree": "Software Engineer",
+   *   "school": "Harvard",
+   *   "field": "Computer Science",
+   *   "from_year": "2012",
+   *   "to_year": "2013-05-08",
+   *   "description": "Education description"
+   * }
+   * @callback successCallback - Callback function if operation succeeded (required)
+   * @callback errorCallback - Callback function if operation failed
+   */
+  updateEducation (context, userId, educationId, data, successCallback, errorCallback) {
+    var educationURL = this.getEducationURL(userId, educationId)
+    var fullData = {
+      'data': {
+        'type': 'educations',
+        'attributes': data
+      }
+    }
+    api.patchEndpoint(context, educationURL, fullData, successCallback, errorCallback)
+  },
+
+  /**
+   * @summary Delete Education entry
+   * @param context - The Vue component where this method is being called from
+   * @param {Number} userId - The ID of the user
+   * @param {Number} educationId - The ID of the education to delete
+   * @callback successCallback - Callback function if operation succeeded (required)
+   */
+  deleteEducation (context, userId, educationId, successCallback) {
+    var educationURL = this.getEducationURL(userId, educationId)
+    api.deleteEndpoint(context, educationURL, successCallback)
   }
 }
