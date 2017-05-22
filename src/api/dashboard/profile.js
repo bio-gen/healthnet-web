@@ -27,7 +27,7 @@ export default {
 
   /**
    * @summary Get Work Experience list
-   * @param context - The Vue component where this method is being called from
+   * @param {Object} context - The Vue component where this method is being called from
    * @param {Number} userId - The ID of the user
    * @callback successCallback - Callback function if operation succeeded (required)
    */
@@ -46,8 +46,8 @@ export default {
    *   "title": "Software Engineer",
    *   "company": "Apple",
    *   "location": "USA",
-   *   "start_date": "2017-05-08",
-   *   "end_date": "2017-05-08",
+   *   "start_year": "2017-05-08",
+   *   "end_year": "2017-05-08",
    *   "current": true,
    *   "description": "Job description"
    * }
@@ -75,8 +75,8 @@ export default {
    *   "title": "Software Engineer",
    *   "company": "Apple",
    *   "location": "USA",
-   *   "start_date": "2017-05-08",
-   *   "end_date": "2017-05-08",
+   *   "start_year": "2017-05-08",
+   *   "end_year": "2017-05-08",
    *   "current": true,
    *   "description": "Job description"
    * }
@@ -96,7 +96,7 @@ export default {
 
   /**
    * @summary Delete Work Experience entry
-   * @param context - The Vue component where this method is being called from
+   * @param {Object} context - The Vue component where this method is being called from
    * @param {Number} userId - The ID of the user
    * @param {Number} experienceId - The ID of the experience to delete
    * @callback successCallback - Callback function if operation succeeded (required)
@@ -108,7 +108,7 @@ export default {
 
   /**
    * @summary Get Education list
-   * @param context - The Vue component where this method is being called from
+   * @param {Object} context - The Vue component where this method is being called from
    * @param {Number} userId - The ID of the user
    * @callback successCallback - Callback function if operation succeeded (required)
    */
@@ -127,8 +127,9 @@ export default {
    *   "degree": "Software Engineer",
    *   "school": "Harvard",
    *   "field": "Computer Science",
-   *   "from_year": "2012",
-   *   "to_year": "2013-05-08",
+   *   "start_year": "2012",
+   *   "end_year": "2013-05-08",
+   *   "current": true,
    *   "description": "Education description"
    * }
    * @callback successCallback - Callback function if operation succeeded (required)
@@ -155,8 +156,9 @@ export default {
    *   "degree": "Software Engineer",
    *   "school": "Harvard",
    *   "field": "Computer Science",
-   *   "from_year": "2012",
-   *   "to_year": "2013-05-08",
+   *   "start_year": "2012",
+   *   "end_year": "2013-05-08",
+   *   "current": true,
    *   "description": "Education description"
    * }
    * @callback successCallback - Callback function if operation succeeded (required)
@@ -175,7 +177,7 @@ export default {
 
   /**
    * @summary Delete Education entry
-   * @param context - The Vue component where this method is being called from
+   * @param {Object} context - The Vue component where this method is being called from
    * @param {Number} userId - The ID of the user
    * @param {Number} educationId - The ID of the education to delete
    * @callback successCallback - Callback function if operation succeeded (required)

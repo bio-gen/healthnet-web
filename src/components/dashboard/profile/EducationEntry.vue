@@ -52,28 +52,54 @@
             <li class="list-group-item row">
               <div class="col-md-6">
                 <div class="form-group form-inline">
-                  <label for="from_year">From:</label>
+                  <label for="startYear">From:</label>
                   <span v-if="entryType === 'read'">
-                    {{ entry.attributes.from_year }}
+                    {{ entry.attributes.start_year }}
                   </span>
-                  <input v-else type="text" class="form-control" id="from_year"
-                    placeholder="yyyy" v-model="thisEntry.attributes.from_year" required>
+                  <div v-else class="form-group">
+                    <!--<input v-else type="text" class="form-control" id="startYear"
+                      placeholder="yyyy" v-model="thisEntry.attributes.start_year" required />-->
+                    <select class="form-control" id="startYear"
+                      v-model="thisEntry.attributes.start_year" required>
+                      <option v-for="year in years" :value="year">
+                        {{ year }}
+                      </option>
+                    </select>
+                  </div>
                 </div>
               </div>
               <div class="col-md-6">
                 <div class="form-group form-inline">
-                  <label for="to_year">To:</label>
+                  <label for="endYear">To:</label>
                   <span v-if="entryType === 'read'">
-                    {{ entry.attributes.to_year }}
+                    {{ entry.attributes.end_year }}
                   </span>
-                  <input v-else type="text" class="form-control" id="to_year"
-                    placeholder="yyyy" v-model="thisEntry.attributes.to_year" required>
+                  <div v-else class="form-group">
+                    <!--<input type="text" class="form-control" id="endYear"
+                      placeholder="yyyy" v-model="thisEntry.attributes.end_year" ref="endYear" required />-->
+                    <select class="form-control" id="endYear"
+                      v-model="thisEntry.attributes.end_year" required>
+                      <option v-for="year in years" :value="year">
+                        {{ year }}
+                      </option>
+                    </select>
+                  </div>
+                  &nbsp;&nbsp;&nbsp;
+                  <div class="checkbox">
+                    <label>
+                      <input v-if="entryType === 'read'" type="checkbox"
+                        v-model="entry.attributes.current" ref="current" disabled />
+                      <input v-else type="checkbox"
+                        v-model="thisEntry.attributes.current" ref="current" />
+                      Current
+                    </label>
+                  </div>
                 </div>
               </div>
             </li>
             <li class="list-group-item">
               <div class="form-group">
-                <label for="location" class="sr-only">Description:</label>
+                <label for="location">Description:</label>
                 <span v-if="entryType === 'read'">
                   {{ entry.attributes.description }}
                 </span>
@@ -124,12 +150,14 @@ export default {
           degree: '',
           school: '',
           field: '',
-          from_year: '',
-          to_year: '',
+          start_year: util.currentYear(),
+          end_year: util.currentYear(),
+          current: false,
           description: ''
         }
       },
-      error: ''
+      error: '',
+      years: util.range(util.currentYear(100), 110)
     }
   },
   props: {

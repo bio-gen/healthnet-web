@@ -52,7 +52,7 @@ export default {
 
   /**
    * @summary READ operation from API
-   * @param context - The Vue component where this method is being called from
+   * @param {Object} context - The Vue component where this method is being called from
    * @param {String} url - The URL of the endpoint
    * @callback successCallback - Callback function if operation succeeded (required)
    * @callback errorCallback - Callback function if operation failed
@@ -77,7 +77,7 @@ export default {
 
   /**
    * @summary POST operation from API
-   * @param context - The Vue component where this method is being called from
+   * @param {Object} context - The Vue component where this method is being called from
    * @param {String} url - The URL of the endpoint
    * @param {Object} data - The data to send in the POST body
    * @callback successCallback - Callback function if operation succeeded (required)
@@ -103,7 +103,7 @@ export default {
 
   /**
    * @summary PATCH operation from API
-   * @param context - The Vue component where this method is being called from
+   * @param {Object} context - The Vue component where this method is being called from
    * @param {String} url - The URL of the endpoint
    * @param {Object} data - The data to send in the POST body
    * @callback successCallback - Callback function if operation succeeded (required)
@@ -129,7 +129,7 @@ export default {
 
   /**
    * @summary DELETE operation from API
-   * @param context - The Vue component where this method is being called from
+   * @param {Object} context - The Vue component where this method is being called from
    * @param {String} url - The URL of the endpoint
    * @callback successCallback - Callback function if operation succeeded (required)
    * @callback errorCallback - Callback function if operation failed
