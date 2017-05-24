@@ -112,15 +112,15 @@
 				</div>
 				<div v-if="entryType !== 'read'" class="panel-footer">
 				  <div class="row">
-				    <div class="col-md-offset-9 col-md-1">
+            <div class="col-xs-offset-2 col-xs-4 col-sm-offset-8 col-sm-2 col-md-offset-9 col-md-1">
               <div class="btn btn-primary" v-on:click="cancel">
-                Cancel
+            	Cancel
               </div>
             </div>
-				    <div class="col-md-1">
+            <div class="col-xs-4 col-sm-2 col-md-1">
               <button type="submit" class="btn btn-primary">
-                <i v-if="saving" class="fa fa-spinner fa-spin"></i>
-                <span v-else>Save</span>
+            	<i v-if="saving" class="fa fa-spinner fa-spin"></i>
+            	<span v-else>Save</span>
               </button>
             </div>
           </div>

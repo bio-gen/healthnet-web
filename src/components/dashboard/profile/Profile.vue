@@ -51,7 +51,7 @@ export default {
   },
   mounted () {
     profile.getExperienceList(this, this.user.id, (response) => {
-      if (response.body.data) {
+      if (response.body.data && response.body.data.length > 0) {
         this.info.title = response.body.data[0].attributes.title
         this.info.company = response.body.data[0].attributes.company
         this.info.location = response.body.data[0].attributes.location
@@ -59,7 +59,7 @@ export default {
     })
 
     profile.getEducationList(this, this.user.id, (response) => {
-      if (response.body.data) {
+      if (response.body.data && response.body.data.length > 0) {
         this.info.degree = response.body.data[0].attributes.degree
       }
       this.loading = false
