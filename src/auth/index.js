@@ -10,11 +10,24 @@ const USER_URL = api.API_URL + 'users/'
 
 export default {
 
+  getUserURL (userId) {
+    var url = USER_URL
+    if (userId) {
+      url += userId + '/'
+    }
+    return url
+  },
+
   user: {
     id: -1,
     firstName: '',
     lastName: '',
     email: '',
+    title: '',
+    location: '',
+    institution: '',
+    dateOfBirth: '',
+    phoneNumber: '',
     authenticated: false,
 
     clear () {
@@ -22,14 +35,25 @@ export default {
       this.firstName = ''
       this.lastName = ''
       this.email = ''
+      this.title = ''
+      this.location = ''
+      this.institution = ''
+      this.dateOfBirth = ''
+      this.phoneNumber = ''
       this.authenticated = false
     },
 
-    setUserArgs (id, firstName, lastName, email, authenticated) {
+    setUserArgs (id, firstName, lastName, email, title, location, institution,
+        dateOfBirth, phoneNumber, authenticated) {
       this.id = id
       this.firstName = firstName
       this.lastName = lastName
       this.email = email
+      this.title = title
+      this.location = location
+      this.institution = institution
+      this.dateOfBirth = dateOfBirth
+      this.phoneNumber = phoneNumber
       this.authenticated = authenticated
     },
 
@@ -38,7 +62,40 @@ export default {
       this.firstName = user.firstName
       this.lastName = user.lastName
       this.email = user.email
+      this.title = user.title
+      this.location = user.location
+      this.institution = user.institution
+      this.dateOfBirth = user.dateOfBirth
+      this.phoneNumber = user.phoneNumber
       this.authenticated = user.authenticated
+    },
+
+    updateUser (data) {
+      this.firstName = data.first_name
+      this.lastName = data.last_name
+      this.title = data.title
+      this.location = data.location
+      this.institution = data.institution
+      this.dateOfBirth = data.date_of_birth
+      this.phoneNumber = data.phone_number
+    }
+  },
+
+  /**
+   * @summary Creates a test user variable in case the server is down.
+   * This will only work in development mode.
+   */
+  forceUserLogin (redirect) {
+    if (process.env.NODE_ENV === 'development') {
+      console.log('Forcing user login...')
+      this.user.setUserArgs(0, 'Test', 'Test', 'test@test.com', 'Test', 'Test', 'Test',
+          '2017-01-01', '(123) 456-7890', true)
+      localStorage.setItem('user', JSON.stringify(this.user))
+      localStorage.setItem('jwt', 'test')
+
+      if (redirect) {
+        router.push(redirect)
+      }
     }
   },
 
@@ -67,10 +124,16 @@ export default {
         response.body.data.attributes.first_name,
         response.body.data.attributes.last_name,
         response.body.data.attributes.email,
+        response.body.data.attributes.title,
+        response.body.data.attributes.location,
+        response.body.data.attributes.institution,
+        response.body.data.attributes.date_of_birth,
+        response.body.data.attributes.phone_number,
         true
       )
       localStorage.setItem('user', JSON.stringify(this.user))
 
+      context.loading = false
       if (redirect) {
         router.push(redirect)
       }
@@ -81,6 +144,7 @@ export default {
         context.error = 'There was an error processing your request (' +
             response.status + ' - ' + response.data + '). Please contact the ' +
             'system administrator.'
+        this.forceUserLogin(redirect)
       }
     })
   },
@@ -97,8 +161,6 @@ export default {
    */
   login (context, creds, redirect) {
     context.$http.post(LOGIN_URL, creds, this.postOptions).then(response => {
-      context.loading = false
-
       localStorage.setItem('jwt', response.body.jwt)
       var decodedJWT = jwtDecode(response.body.jwt)
 
@@ -111,6 +173,7 @@ export default {
         context.error = 'There was an error processing your request (' +
             response.status + ' - ' + response.data + '). Please contact the ' +
             'system administrator.'
+        this.forceUserLogin(redirect)
       }
     }).then(decodedJWT => {
       if (decodedJWT) {
@@ -121,46 +184,54 @@ export default {
   },
 
   /**
-   * @summary Send a request to the signup URL and save the returned JWT
+   * @summary Create a new User
    * @param {Object} context - The Vue component where this method is being called from
-   * @param {Object} creds - The credentials for login
+   * @param {Object} data - The data (credentials) required for signup
    * {
-   *   "data": {
-   *     "type": "users",
-   *     "attributes": {
-   *       "first_name": "First",
-   *       "last_name": "Last",
-   *       "email": "user@user.com",
-   *       "password": "user123",
-   *       "password_confirmation": "user123"
-   *     }
-   *   }
+   *   "first_name": "First",
+   *   "last_name": "Last",
+   *   "email": "user@user.com",
+   *   "password": "user123",
+   *   "password_confirmation": "user123"
    * }
-   * @param {String} redirect - A route to redirect to after a successful call
+   * @callback successCallback - Callback function if operation succeeded (required)
+   * @callback errorCallback - Callback function if operation failed
    */
-  signup (context, creds, redirect) {
-    context.$http.post(USER_URL, creds, this.postOptions).then(response => {
-      context.loading = false
-      // Redirect to a specified route
-      if (redirect) {
-        router.push(redirect)
+  signup (context, data, successCallback, errorCallback) {
+    var userURL = this.getUserURL()
+    var fullData = {
+      'data': {
+        'type': 'users',
+        'attributes': data
       }
-    }, response => {
-      context.loading = false
-      if (response.status === 422) {
-        if (response.data.password_confirmation) {
-          context.error = 'Passwords do not match.'
-        } else if (response.data.email) {
-          context.error = 'A user with this email already exists.'
-        } else {
+    }
+    api.postEndpoint(context, userURL, fullData, successCallback, errorCallback)
+  },
 
-        }
-      } else {
-        context.error = 'There was an error processing your request (' +
-            response.status + ' - ' + response.data + '). Please contact the ' +
-            'system administrator.'
+  /**
+   * @summary Update User information
+   * @param {Object} context - The Vue component where this method is being called from
+   * @param {Number} userId - The ID of the user
+   * @param {Object} data
+   * {
+   *   "first_name": "First",
+   *   "last_name": "Last",
+   *   "email": "user@user.com",
+   *   "password": "user123",
+   *   "password_confirmation": "user123"
+   * }
+   * @callback successCallback - Callback function if operation succeeded (required)
+   * @callback errorCallback - Callback function if operation failed
+   */
+  updateUser (context, userId, data, successCallback, errorCallback) {
+    var userURL = this.getUserURL(userId)
+    var fullData = {
+      'data': {
+        'type': 'users',
+        'attributes': data
       }
-    })
+    }
+    api.patchEndpoint(context, userURL, fullData, successCallback, errorCallback)
   },
 
   /**

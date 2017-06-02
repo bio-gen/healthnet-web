@@ -5,7 +5,6 @@
 </template>
 
 <script>
-import auth from '@/auth'
 import AccountForm from '@/components/dashboard/account/AccountForm'
 export default {
   name: 'editAccount',
@@ -14,8 +13,7 @@ export default {
   },
   data () {
     return {
-      msg: 'Edit account component',
-      user: auth.user
+      msg: 'Edit account component'
     }
   },
   props: {

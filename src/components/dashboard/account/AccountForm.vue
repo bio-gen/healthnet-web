@@ -1,22 +1,73 @@
 <template>
   <div class="account-form">
     <div class="row">
-  		<div class="col-md-4 col-md-offset-4">
+  		<div class="col-md-4 col-sm-6 col-md-offset-4 col-sm-offset-3">
         <div v-html="headerInformation"></div>
+        <div class="alert alert-success alert-dismissable" v-if="successMsg">
+          <a href="#" class="close" data-dismiss="alert" aria-label="close">&times;</a>
+          <p>{{ successMsg }}</p>
+        </div>
+        <div class="alert alert-danger" v-if="error">
+          <p>{{ error }}</p>
+        </div>
         <form @submit="submit">
-          <div class="form-group row">
+          <div class="form-group row required">
             <div class="col-md-6">
-              <label for="first-name">First Name</label>
+              <label for="first-name" class="control-label">First name</label>
               <input type="text" class="form-control" id="first-name"
                 name="first-name" placeholder="Your first name"
                 v-model="credentials.firstName" required autofocus>
             </div>
 
             <div class="col-md-6">
-              <label for="last-name">Last Name</label>
+              <label for="last-name" class="control-label">Last name</label>
               <input type="text" class="form-control" id="last-name"
                 name="last-name" placeholder="Your last name"
                 v-model="credentials.lastName" required>
+            </div>
+          </div>
+
+          <div v-if="type === 'update'" class="form-group">
+            <label for="title" class="control-label">Title</label>
+            <input type="text" class="form-control" id="title"
+              name="title" placeholder="Your professional title"
+              v-model="credentials.title">
+          </div>
+
+          <div v-if="type === 'update'" class="form-group">
+            <label for="location" class="control-label">Location</label>
+            <input type="text" class="form-control" id="location"
+              name="location" placeholder="Your current location"
+              v-model="credentials.location">
+          </div>
+
+          <div v-if="type === 'update'" class="form-group">
+            <label for="institution" class="control-label">Institution</label>
+            <input type="text" class="form-control" id="institution"
+              name="institution" placeholder="Your current institution"
+              v-model="credentials.institution">
+          </div>
+
+          <div v-if="type === 'update'" class="form-group">
+            <label for="date-of-birth" class="control-label">Date of birth</label>
+            <input type="text" class="form-control" id="dateOfBirth"
+              name="date-of-birth" placeholder="yyyy-mm-dd"
+              v-model="credentials.dateOfBirth">
+          </div>
+
+          <div v-if="type === 'update'" class="form-group">
+            <label for="phone-number" class="control-label">Phone number</label>
+            <input type="text" class="form-control" id="phoneNumber"
+              name="phone-number" placeholder="(123) 456-7890"
+              v-model="credentials.phoneNumber">
+          </div>
+
+          <div class="input-group">
+            <div class="checkbox" v-if="type === 'update'">
+              <label>
+                <input type="checkbox" ref="changePassword" v-model="changePassword" />
+                Change password
+              </label>
             </div>
           </div>
 
@@ -27,38 +78,39 @@
               v-model="credentials.email" required :disabled="type === 'update'">
           </div>
 
-          <div class="input-group">
-            <span class="input-group-addon"><i class="glyphicon glyphicon-lock"></i></span>
-            <input type="password" class="form-control" id="password"
-              name="password" :placeholder="type === 'update' ? 'New Password' : 'Password'"
-              v-model="credentials.password" :required="type === 'create'">
-          </div>
+          <div v-if="changePassword || type === 'create'">
+            <div v-if="type === 'update'" class="input-group">
+              <span class="input-group-addon"><i class="glyphicon glyphicon-lock"></i></span>
+              <input type="password" class="form-control" id="oldPassword"
+                name="old-password" placeholder="Old password"
+                v-model="oldPassword">
+            </div>
 
-          <div class="input-group">
-            <span class="input-group-addon"><i class="glyphicon glyphicon-lock"></i></span>
-            <input type="password" class="form-control" id="confirm-password"
-              name="confirm-password"
-              :placeholder="type === 'update' ? 'Confirm New Password' : 'Confirm Password'"
-              v-model="credentials.passwordConfirmation" :required="type === 'create'">
+            <div class="input-group">
+              <span class="input-group-addon"><i class="glyphicon glyphicon-lock"></i></span>
+              <input type="password" class="form-control" id="password"
+                name="password" :placeholder="type === 'update' ? 'New password' : 'Password'"
+                v-model="credentials.password" :required="type === 'create'">
+            </div>
+
+            <div class="input-group">
+              <span class="input-group-addon"><i class="glyphicon glyphicon-lock"></i></span>
+              <input type="password" class="form-control" id="confirm-password"
+                name="confirm-password"
+                :placeholder="type === 'update' ? 'Confirm new password' : 'Confirm password'"
+                v-model="credentials.passwordConfirmation" :required="type === 'create'">
+            </div>
           </div>
 
           <br/>
 
-          <div class="form-group row">
-            <div class="offset-md-2 col-md-10">
-              <button type="submit" class="btn btn-primary">
-                <i v-if="loading" class="fa fa-spinner fa-spin"></i>
-                <span v-else v-html="type === 'update' ? 'Save' : 'Sign Up'"></span>
-              </button>
-            </div>
+          <div class="form-group">
+            <button type="submit" class="btn btn-primary form-control pull-right">
+              <i v-if="saving" class="fa fa-spinner fa-spin"></i>
+              <span v-else v-html="type === 'update' ? 'Save' : 'Sign Up'"></span>
+            </button>
           </div>
         </form>
-        <div class="alert alert-success" v-if="successMsg">
-          <p>{{ successMsg }}</p>
-        </div>
-        <div class="alert alert-danger" v-if="error">
-          <p>{{ error }}</p>
-        </div>
       </div>
     </div>
   </div>
@@ -66,6 +118,7 @@
 
 <script>
 import auth from '@/auth'
+import router from '@/router'
 export default {
   name: 'accountForm',
   data () {
@@ -74,28 +127,40 @@ export default {
         firstName: '',
         lastName: '',
         email: '',
+        title: '',
+        location: '',
+        institution: '',
+        dateOfBirth: '',
+        phoneNumber: '',
         password: '',
         passwordConfirmation: '',
         setCredentials (user) {
           this.firstName = user.firstName
           this.lastName = user.lastName
           this.email = user.email
+          this.title = user.title
+          this.location = user.location
+          this.institution = user.institution
+          this.dateOfBirth = user.dateOfBirth
+          this.phoneNumber = user.phoneNumber
         }
       },
+      changePassword: false,
+      oldPassword: '',
       successMsg: '',
       error: '',
-      loading: false
+      saving: false
     }
   },
   props: {
-    type: {
+    type: {  // create, update
       type: String,
       required: true
     }
   },
   methods: {
     submit (e) {
-      this.loading = true
+      this.saving = true
       e.preventDefault()
       if (this.type === 'create') {
         this.signup()
@@ -104,24 +169,59 @@ export default {
       }
     },
     signup () {
-      var credentials = {
-        data: {
-          type: 'users',
-          attributes: {
-            first_name: this.credentials.firstName,
-            last_name: this.credentials.lastName,
-            email: this.credentials.email,
-            password: this.credentials.password,
-            password_confirmation: this.credentials.passwordConfirmation
-          }
-        }
+      var data = {
+        first_name: this.credentials.firstName,
+        last_name: this.credentials.lastName,
+        email: this.credentials.email,
+        password: this.credentials.password,
+        password_confirmation: this.credentials.passwordConfirmation
       }
-      // We need to pass the component's this context
-      // to properly make use of http in the auth service
-      auth.signup(this, credentials, '/')
+      // We need to pass the component's this context to properly make use of
+      // http in the auth service
+      auth.signup(this, data, (response) => {
+        this.saving = false
+        // Redirect to index
+        router.push('/')
+      }, (response) => {
+        this.saving = false
+        if (response.status === 422) {
+          if (response.data.password_confirmation) {
+            this.error = 'Passwords do not match.'
+          } else if (response.data.email) {
+            this.error = 'A user with this email already exists.'
+          }
+        } else {
+          this.error = 'There was an error processing your request (' +
+              response.status + ' - ' + response.data + '). Please contact the ' +
+              'system administrator.'
+        }
+      })
     },
-    update (e) {
-      console.log('Updating and stuff...')
+    update () {
+      var data = {
+        first_name: this.credentials.firstName,
+        last_name: this.credentials.lastName,
+        title: this.credentials.title,
+        location: this.credentials.location,
+        institution: this.credentials.institution,
+        date_of_birth: this.credentials.dateOfBirth,
+        phone_number: this.credentials.phoneNumber
+      }
+
+      auth.updateUser(this, auth.user.id, data, (response) => {
+        auth.user.updateUser(data)
+        localStorage.setItem('user', JSON.stringify(this.user))
+        this.saving = false
+        this.error = ''
+        this.successMsg = 'Account information saved successfully.'
+      }, (response) => {
+        this.saving = false
+        if (response.status === 422) {
+          this.error = 'Incorrect data input.'
+        } else {
+          this.error = 'Server error (Status ' + response.status + ').'
+        }
+      })
     }
   },
   computed: {

@@ -1,52 +1,68 @@
 <template>
   <div class="profile-entry-list">
-    <div class="container-fluid bg-3">
-      <div class="alert alert-danger" v-if="error">
-        <p>{{ error }}</p>
-      </div>
-      <div class="alert alert-success alert-dismissable" v-if="successMsg">
-        <a href="#" class="close" data-dismiss="alert" aria-label="close">&times;</a>
-        <strong>Success!</strong> {{ successMsg }}
-      </div>
-      <div class="panel-group">
-        <div class="panel panel-default">
-          <div class="panel-heading">
-            <h3 class="panel-title">
-              <a class="h3 accordion-toggle" data-toggle="collapse"
-                 title="Toggle hide/show" :href="'#' + type + 'List'"
-                  :class="{'collapsed': entries.length == 0}">
-                <i v-if="loading" class="fa fa-spinner fa-spin"></i>
-                <i v-else class="fa" :class="headingIcon"></i>
-                &nbsp;
-                {{ heading }}
-              </a>
-            </h3>
-            <a title="New entry" role="button" v-on:click="addEntry"
-             data-toggle="collapse" class="add">
-              Add
-              <i class="fa fa-plus-circle"></i>
+    <div class="alert alert-danger" v-if="error">
+      <p>{{ error }}</p>
+    </div>
+    <div class="alert alert-success alert-dismissable" v-if="successMsg">
+      <a href="#" class="close" data-dismiss="alert" aria-label="close">&times;</a>
+      <strong>Success!</strong> {{ successMsg }}
+    </div>
+    <div class="panel-group">
+      <div class="panel panel-default">
+        <div class="panel-heading">
+          <h3 class="panel-title">
+            <a class="h3 accordion-toggle" data-toggle="collapse"
+               title="Toggle hide/show" :href="'#' + type + 'List'"
+                :class="{'collapsed': entries.length == 0}">
+              <i v-if="loading" class="fa fa-spinner fa-spin"></i>
+              <i v-else class="fa" :class="headingIcon"></i>
+              &nbsp;
+              {{ heading }}
             </a>
-          </div>
-          <div :id="type + 'List'" class="panel-collapse collapse in">
-            <ul class="list-group">
-              <li class="list-group-item" v-if="newEntry">
-                <experienceEntry v-if="type === 'experience'" entryTypeProp="create"
-                  :user="user" @cancel="newEntry = false" @save="saveEntry">
-                </experienceEntry>
-                <educationEntry v-else-if="type === 'education'" entryTypeProp="create"
-                  :user="user" @cancel="newEntry = false" @save="saveEntry">
-                </educationEntry>
-              </li>
-              <li v-for="(entry, key) in entries" class="list-group-item">
-          			<experienceEntry v-if="type === 'experience'" entryTypeProp="read" :entry="entry"
-          			  :user="user" @delete="deleteEntry(key)" @update="updateEntry">
-          			</experienceEntry>
-          			<educationEntry v-else-if="type === 'education'" entryTypeProp="read" :entry="entry"
-          			  :user="user" @delete="deleteEntry(key)" @update="updateEntry">
-          			</educationEntry>
-        		  </li>
-            </ul>
-          </div>
+          </h3>
+          <a title="New entry" role="button" v-on:click="addEntry"
+           data-toggle="collapse" class="add">
+            Add
+            <i class="fa fa-plus-circle"></i>
+          </a>
+        </div>
+        <div :id="type + 'List'" class="panel-collapse collapse in">
+          <ul class="list-group">
+            <li class="list-group-item" v-if="newEntry">
+              <experienceEntry v-if="type === 'experience'" entryType="create"
+                :user="user" :saving="newEntrySaving" :error="newEntryError"
+                @cancel="cancelEntry()" @create="createEntry">
+              </experienceEntry>
+              <educationEntry v-else-if="type === 'education'" entryType="create"
+                :user="user" :saving="newEntrySaving" :error="newEntryError"
+                @cancel="cancelEntry()" @create="createEntry">
+              </educationEntry>
+              <certificateEntry v-else-if="type === 'certificates'" entryType="create"
+                :user="user" :saving="newEntrySaving" :error="newEntryError"
+                @cancel="cancelEntry()" @create="createEntry">
+              </certificateEntry>
+            </li>
+            <li v-for="(entry, key) in entries" class="list-group-item">
+        			<experienceEntry v-if="type === 'experience'" :entryType="entry.entryType"
+        			  :entry="entry" :user="user" :deleting="entry.deleting" :saving="entry.saving"
+        			  :error="entry.error"
+        			  @delete="deleteEntry(entry, key)" @update="updateEntry" @edit="editEntry(entry)"
+        			  @cancel="cancelEntry(entry)">
+        			</experienceEntry>
+        			<educationEntry v-else-if="type === 'education'" :entryType="entry.entryType"
+        			  :entry="entry" :user="user" :deleting="entry.deleting" :saving="entry.saving"
+        			  :error="entry.error"
+        			  @delete="deleteEntry(entry, key)" @update="updateEntry" @edit="editEntry(entry)"
+        			  @cancel="cancelEntry(entry)">
+        			</educationEntry>
+        			<certificateEntry v-else-if="type === 'certificates'" :entryType="entry.entryType"
+        			  :entry="entry" :user="user" :deleting="entry.deleting" :saving="entry.saving"
+        			  :error="entry.error"
+        			  @delete="deleteEntry(entry, key)" @update="updateEntry" @edit="editEntry(entry)"
+        			  @cancel="cancelEntry(entry)">
+        			</certificateEntry>
+      		  </li>
+          </ul>
         </div>
       </div>
     </div>
@@ -55,12 +71,14 @@
 
 <script>
 import profile from '@/api/dashboard/profile'
+import util from '@/util'
 import ExperienceEntry from '@/components/dashboard/profile/ExperienceEntry'
 import EducationEntry from '@/components/dashboard/profile/EducationEntry'
+import CertificateEntry from '@/components/dashboard/profile/CertificateEntry'
 export default {
   name: 'profileEntryList',
   components: {
-    ExperienceEntry, EducationEntry
+    ExperienceEntry, EducationEntry, CertificateEntry
   },
   data () {
     return {
@@ -68,7 +86,9 @@ export default {
       error: '',
       successMsg: '',
       loading: false,
-      newEntry: false
+      newEntry: false,
+      newEntrySaving: false,
+      newEntryError: ''
     }
   },
   props: {
@@ -82,20 +102,120 @@ export default {
     }
   },
   methods: {
+    loadList (data) {
+      for (var entry of data) {
+        entry.deleting = false
+        entry.saving = false
+        entry.entryType = 'read'
+        this.entries.push(entry)
+      }
+      this.loading = false
+    },
+    getEntry (entryId) {
+      for (var i = 0; i < this.entries.length; i++) {
+        var entry = this.entries[i]
+        if (entry.id === entryId) {
+          return entry
+        }
+      }
+    },
     addEntry () {
       this.newEntry = true
     },
-    deleteEntry (key) {
+    editEntry (entry) {
+      entry.entryType = 'update'
+    },
+    cancelEntry (entry) {
+      if (entry) {
+        entry.entryType = 'read'
+      } else {
+        this.newEntry = false
+      }
+    },
+    performDelete (key, entry) {
       this.entries.splice(key, 1)
       this.successMsg = 'Entry deleted successfully.'
+      entry.error = ''
+      entry.deleting = false
     },
-    saveEntry (entry) {
-      this.entries.unshift(entry)
+    deleteEntry (entry, key) {
+      util.confirmDialog('Delete Entry',
+        'Are you sure you want to delete this entry?', 'small', () => {
+          entry.deleting = true
+          switch (this.type) {
+            case 'experience':
+              profile.deleteExperience(this, this.user.id, entry.id,
+                  (response) => this.performDelete(key, entry))
+              break
+            case 'education':
+              profile.deleteEducation(this, this.user.id, entry.id,
+                  (response) => this.performDelete(key, entry))
+              break
+            case 'certificates':
+              profile.deleteCertificate(this, this.user.id, entry.id,
+                  (response) => this.performDelete(key, entry))
+              break
+            case 'affiliations':
+              console.log('Not implemented...')
+              break
+          }
+        }
+      )
+    },
+    performCreate (response) {
       this.newEntry = false
+      this.newEntryError = ''
       this.successMsg = 'Entry added successfully.'
+      this.newEntrySaving = false
+      var entry = response.body.data
+      entry.deleting = false
+      entry.saving = false
+      entry.entryType = 'read'
+      this.entries.unshift(entry)
     },
-    updateEntry () {
+    createEntry (data) {
+      this.newEntrySaving = true
+      switch (this.type) {
+        case 'experience':
+          profile.createExperience(this, this.user.id, data,
+              this.performCreate, (response) => { this.newEntrySaving = false })
+          break
+        case 'education':
+          profile.createEducation(this, this.user.id, data,
+              this.performCreate, (response) => { this.newEntrySaving = false })
+          break
+        case 'certificates':
+          profile.createCertificate(this, this.user.id, data,
+              this.performCreate, (response) => { this.newEntrySaving = false })
+          break
+      }
+    },
+    performUpdate (entry) {
+      entry.saving = false
+      entry.error = ''
+      entry.entryType = 'read'
       this.successMsg = 'Entry updated successfully.'
+    },
+    updateEntry (entryId, data) {
+      var entry = this.getEntry(entryId)
+      entry.saving = true
+      switch (this.type) {
+        case 'experience':
+          profile.updateExperience(this, this.user.id, entryId, data,
+              (response) => this.performUpdate(entry),
+              (response) => { entry.saving = false })
+          break
+        case 'education':
+          profile.updateEducation(this, this.user.id, entryId, data,
+              (response) => this.performUpdate(entry),
+              (response) => { entry.saving = false })
+          break
+        case 'certificates':
+          profile.updateCertificate(this, this.user.id, entryId, data,
+              (response) => this.performUpdate(entry),
+              (response) => { entry.saving = false })
+          break
+      }
     }
   },
   computed: {
@@ -118,20 +238,16 @@ export default {
   mounted () {
     switch (this.type) {
       case 'experience':
-        profile.getExperienceList(this, this.user.id, (response) => {
-          for (const item of response.body.data) {
-            this.entries.push(item)
-          }
-          this.loading = false
-        })
+        profile.getExperienceList(this, this.user.id,
+            (response) => this.loadList(response.body.data))
         break
       case 'education':
-        profile.getEducationList(this, this.user.id, (response) => {
-          for (const item of response.body.data) {
-            this.entries.push(item)
-          }
-          this.loading = false
-        })
+        profile.getEducationList(this, this.user.id,
+            (response) => this.loadList(response.body.data))
+        break
+      case 'certificates':
+        profile.getCertificatesList(this, this.user.id,
+            (response) => this.loadList(response.body.data))
         break
     }
   }

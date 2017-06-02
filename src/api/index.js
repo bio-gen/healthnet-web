@@ -31,7 +31,7 @@ export default {
 
   errorMap: {
     404: 'Not found.',
-    422: 'Data entry error'
+    422: 'Data entry error. Please enter all required fields.'
   },
 
   /**
@@ -43,7 +43,7 @@ export default {
     if (errorMap.hasOwnProperty(status)) {
       msg = errorMap[status]
     } else {
-      msg = 'There was an error processing your request (' + status + '). ' +
+      msg = 'There was an error processing your request (Status ' + status + '). ' +
           'Please contact the system administrator.'
     }
     context.error = msg
@@ -69,9 +69,8 @@ export default {
     }, response => {
       if (errorCallback) {
         errorCallback(response)
-      } else {
-        this.logError(context, response.status, customErrorMap)
       }
+      this.logError(context, response.status, customErrorMap)
     })
   },
 
@@ -95,9 +94,8 @@ export default {
     }, response => {
       if (errorCallback) {
         errorCallback(response)
-      } else {
-        this.logError(context, response.status, customErrorMap)
       }
+      this.logError(context, response.status, customErrorMap)
     })
   },
 
@@ -121,9 +119,8 @@ export default {
     }, response => {
       if (errorCallback) {
         errorCallback(response)
-      } else {
-        this.logError(context, response.status, customErrorMap)
       }
+      this.logError(context, response.status, customErrorMap)
     })
   },
 
@@ -146,9 +143,8 @@ export default {
     }, response => {
       if (errorCallback) {
         errorCallback(response)
-      } else {
-        this.logError(context, response.status, customErrorMap)
       }
+      this.logError(context, response.status, customErrorMap)
     })
   }
 }

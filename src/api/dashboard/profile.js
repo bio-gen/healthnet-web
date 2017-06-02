@@ -25,6 +25,14 @@ export default {
     return url
   },
 
+  getCertificatesURL (userId, certificateId) {
+    var url = USER_URL + userId + '/' + 'certificates/'
+    if (certificateId) {
+      url += certificateId + '/'
+    }
+    return url
+  },
+
   /**
    * @summary Get Work Experience list
    * @param {Object} context - The Vue component where this method is being called from
@@ -46,8 +54,8 @@ export default {
    *   "title": "Software Engineer",
    *   "company": "Apple",
    *   "location": "USA",
-   *   "start_year": "2017-05-08",
-   *   "end_year": "2017-05-08",
+   *   "start_year": "2017",
+   *   "end_year": "2018",
    *   "current": true,
    *   "description": "Job description"
    * }
@@ -75,8 +83,8 @@ export default {
    *   "title": "Software Engineer",
    *   "company": "Apple",
    *   "location": "USA",
-   *   "start_year": "2017-05-08",
-   *   "end_year": "2017-05-08",
+   *   "start_year": "2017",
+   *   "end_year": "2017",
    *   "current": true,
    *   "description": "Job description"
    * }
@@ -128,7 +136,7 @@ export default {
    *   "school": "Harvard",
    *   "field": "Computer Science",
    *   "start_year": "2012",
-   *   "end_year": "2013-05-08",
+   *   "end_year": "2013",
    *   "current": true,
    *   "description": "Education description"
    * }
@@ -157,7 +165,7 @@ export default {
    *   "school": "Harvard",
    *   "field": "Computer Science",
    *   "start_year": "2012",
-   *   "end_year": "2013-05-08",
+   *   "end_year": "2013",
    *   "current": true,
    *   "description": "Education description"
    * }
@@ -185,5 +193,78 @@ export default {
   deleteEducation (context, userId, educationId, successCallback) {
     var educationURL = this.getEducationURL(userId, educationId)
     api.deleteEndpoint(context, educationURL, successCallback)
+  },
+
+  /**
+   * @summary Get Certificates list
+   * @param {Object} context - The Vue component where this method is being called from
+   * @param {Number} userId - The ID of the user
+   * @callback successCallback - Callback function if operation succeeded (required)
+   */
+  getCertificatesList (context, userId, successCallback) {
+    context.loading = true
+    var certificatesURL = this.getCertificatesURL(userId)
+    api.getEndpoint(context, certificatesURL, successCallback)
+  },
+
+  /**
+   * @summary Create a new Certificate entry
+   * @param {Object} context - The Vue component where this method is being called from
+   * @param {Number} userId - The ID of the user
+   * @param {Object} data
+   * {
+   *   "title": "Title",
+   *   "granted_by": "AAA",
+   *   "year": "2010"
+   * }
+   * @callback successCallback - Callback function if operation succeeded (required)
+   * @callback errorCallback - Callback function if operation failed
+   */
+  createCertificate (context, userId, data, successCallback, errorCallback) {
+    var certificatesURL = this.getCertificatesURL(userId)
+    var fullData = {
+      'data': {
+        'type': 'certificates',
+        'attributes': data
+      }
+    }
+    api.postEndpoint(context, certificatesURL, fullData, successCallback, errorCallback)
+  },
+
+  /**
+   * @summary Update a Certificate entry
+   * @param {Object} context - The Vue component where this method is being called from
+   * @param {Number} userId - The ID of the user
+   * @param {Number} certificateId - The ID of the certificate to update
+   * @param {Object} data
+   * {
+   *   "title": "Title",
+   *   "granted_by": "AAA",
+   *   "year": "2010"
+   * }
+   * @callback successCallback - Callback function if operation succeeded (required)
+   * @callback errorCallback - Callback function if operation failed
+   */
+  updateCertificate (context, userId, certificateId, data, successCallback, errorCallback) {
+    var certificatesURL = this.getCertificatesURL(userId, certificateId)
+    var fullData = {
+      'data': {
+        'type': 'certificates',
+        'attributes': data
+      }
+    }
+    api.patchEndpoint(context, certificatesURL, fullData, successCallback, errorCallback)
+  },
+
+  /**
+   * @summary Delete Certificate entry
+   * @param {Object} context - The Vue component where this method is being called from
+   * @param {Number} userId - The ID of the user
+   * @param {Number} certificateId - The ID of the certificate to delete
+   * @callback successCallback - Callback function if operation succeeded (required)
+   */
+  deleteCertificate (context, userId, certificateId, successCallback) {
+    var certificatesURL = this.getCertificatesURL(userId, certificateId)
+    api.deleteEndpoint(context, certificatesURL, successCallback)
   }
 }

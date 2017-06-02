@@ -23,7 +23,7 @@ export default {
 main {
   font-family: Candara, "Segoe UI";
   margin-top: 80px;
-  margin-bottom: 40px;
+  margin-bottom: 80px;
 }
 
 main a:hover {
@@ -39,4 +39,8 @@ main a:link {
   width: 70px;
 }
 
+.form-group.required .control-label:after {
+  content: "*";
+  color: red;
+}
 </style>
