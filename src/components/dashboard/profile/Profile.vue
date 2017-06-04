@@ -6,7 +6,7 @@
           <img id="profilePicture" class="img-rounded" width="20%"
              :alt="fullName" :src="profilePicture"/>
           <h1 v-if="!editing">
-            <a class="cool" v-if="!editing" title="Click to edit" v-on:click="editUser" role="button">
+            <a class="cool" v-if="!editing" title="Click to edit" v-on:click="editUser('firstName')" role="button">
               {{ fullName }}
             </a>
           </h1>
@@ -27,17 +27,17 @@
         <div class="container text-center">
           <div v-if="!editing">
             <p v-if="user.title">
-              <a v-if="!editing" title="Click to edit" v-on:click="editUser" role="button">
+              <a v-if="!editing" title="Click to edit" v-on:click="editUser('title')" role="button">
                 {{ user.title }}
               </a>
             </p>
             <p v-if="user.institution">
-              <a v-if="!editing" title="Click to edit" v-on:click="editUser" role="button">
+              <a v-if="!editing" title="Click to edit" v-on:click="editUser('institution')" role="button">
                 {{ user.institution }}
               </a>
             </p>
             <p v-if="user.location">
-              <a v-if="!editing" title="Click to edit" v-on:click="editUser" role="button">
+              <a v-if="!editing" title="Click to edit" v-on:click="editUser('location')" role="button">
                 {{ user.location }}
               </a>
             </p>
@@ -76,6 +76,7 @@
 
 <script>
 import auth from '@/auth'
+import util from '@/util'
 import ProfileEntryList from '@/components/dashboard/profile/ProfileEntryList'
 import SubmitCancelBtns from '@/components/general/SubmitCancelBtns'
 export default {
@@ -106,8 +107,9 @@ export default {
     }
   },
   methods: {
-    editUser () {
+    editUser (elementId) {
       this.editing = true
+      util.setFocus(this, elementId)
     },
     cancel () {
       this.editing = false

@@ -186,6 +186,18 @@ export default {
     cancel () {
       this.$emit('cancel')
     }
+  },
+  watch: {
+    entryType (value) {
+      if (value === 'update') {
+        util.setFocus(this, 'title')
+      }
+    }
+  },
+  mounted () {
+    if (this.entryType === 'create') {
+      util.setFocus(this, 'title')
+    }
   }
 }
 </script>

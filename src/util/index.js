@@ -53,5 +53,18 @@ export default {
       year -= before
     }
     return year
+  },
+
+  /**
+   * @summary Set the focus of an element and select all of its text
+   * @param {Object} context - the VueJs component where this function is being called from
+   * @param {String} elementId - The id of the element to focus and select
+   */
+  setFocus (context, elementId) {
+    context.$nextTick(() => {
+      var element = document.getElementById(elementId)
+      element.focus()
+      element.select()
+    })
   }
 }

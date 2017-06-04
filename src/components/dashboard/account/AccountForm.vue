@@ -14,14 +14,14 @@
           <div class="form-group row required">
             <div class="col-md-6">
               <label for="first-name" class="control-label">First name</label>
-              <input type="text" class="form-control" id="first-name"
+              <input type="text" class="form-control" id="firstName"
                 name="first-name" placeholder="Your first name"
                 v-model="credentials.firstName" required autofocus>
             </div>
 
             <div class="col-md-6">
               <label for="last-name" class="control-label">Last name</label>
-              <input type="text" class="form-control" id="last-name"
+              <input type="text" class="form-control" id="lastName"
                 name="last-name" placeholder="Your last name"
                 v-model="credentials.lastName" required>
             </div>
@@ -95,7 +95,7 @@
 
             <div class="input-group">
               <span class="input-group-addon"><i class="glyphicon glyphicon-lock"></i></span>
-              <input type="password" class="form-control" id="confirm-password"
+              <input type="password" class="form-control" id="confirmPassword"
                 name="confirm-password"
                 :placeholder="type === 'update' ? 'Confirm new password' : 'Confirm password'"
                 v-model="credentials.passwordConfirmation" :required="type === 'create'">
@@ -244,6 +244,11 @@ export default {
     if (this.type === 'update' && auth.user.authenticated) {
       this.credentials.setCredentials(auth.user)
     }
+    this.$nextTick(() => {
+      var element = document.getElementById('firstName')
+      element.focus()
+      element.select()
+    })
   }
 }
 </script>
