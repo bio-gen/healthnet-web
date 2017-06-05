@@ -30,34 +30,34 @@
           <ul class="list-group">
             <li class="list-group-item" v-if="newEntry">
               <experienceEntry v-if="type === 'experience'" entryType="create"
-                :user="user" :saving="newEntrySaving" :error="newEntryError"
+                :user="user" :saving="newEntrySaving" :error="newEntryError" firstField="title"
                 @cancel="cancelEntry()" @create="createEntry">
               </experienceEntry>
               <educationEntry v-else-if="type === 'education'" entryType="create"
-                :user="user" :saving="newEntrySaving" :error="newEntryError"
+                :user="user" :saving="newEntrySaving" :error="newEntryError" firstField="degree"
                 @cancel="cancelEntry()" @create="createEntry">
               </educationEntry>
               <certificateEntry v-else-if="type === 'certificates'" entryType="create"
-                :user="user" :saving="newEntrySaving" :error="newEntryError"
+                :user="user" :saving="newEntrySaving" :error="newEntryError" firstField="title"
                 @cancel="cancelEntry()" @create="createEntry">
               </certificateEntry>
             </li>
             <li v-for="(entry, key) in entries" class="list-group-item">
         			<experienceEntry v-if="type === 'experience'" :entryType="entry.entryType"
         			  :entry="entry" :user="user" :deleting="entry.deleting" :saving="entry.saving"
-        			  :error="entry.error"
+        			  :error="entry.error" firstField="title"
         			  @delete="deleteEntry(entry, key)" @update="updateEntry" @edit="editEntry(entry)"
         			  @cancel="cancelEntry(entry)">
         			</experienceEntry>
         			<educationEntry v-else-if="type === 'education'" :entryType="entry.entryType"
         			  :entry="entry" :user="user" :deleting="entry.deleting" :saving="entry.saving"
-        			  :error="entry.error"
+        			  :error="entry.error" firstField="degree"
         			  @delete="deleteEntry(entry, key)" @update="updateEntry" @edit="editEntry(entry)"
         			  @cancel="cancelEntry(entry)">
         			</educationEntry>
         			<certificateEntry v-else-if="type === 'certificates'" :entryType="entry.entryType"
         			  :entry="entry" :user="user" :deleting="entry.deleting" :saving="entry.saving"
-        			  :error="entry.error"
+        			  :error="entry.error" firstField="title"
         			  @delete="deleteEntry(entry, key)" @update="updateEntry" @edit="editEntry(entry)"
         			  @cancel="cancelEntry(entry)">
         			</certificateEntry>
