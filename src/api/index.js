@@ -39,7 +39,7 @@ export default {
    */
   logError (context, status, customErrorMap) {
     var errorMap = customErrorMap == null ? this.errorMap : customErrorMap
-    var msg = ''
+    var msg
     if (errorMap.hasOwnProperty(status)) {
       msg = errorMap[status]
     } else {
