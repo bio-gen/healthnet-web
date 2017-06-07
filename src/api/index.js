@@ -67,10 +67,10 @@ export default {
     context.$http.get(url, this.GET_OPTIONS).then(response => {
       successCallback(response)  // Required
     }, response => {
+      this.logError(context, response.status, customErrorMap)
       if (errorCallback) {
         errorCallback(response)
       }
-      this.logError(context, response.status, customErrorMap)
     })
   },
 
@@ -92,10 +92,10 @@ export default {
     context.$http.post(url, data, this.POST_OPTIONS).then(response => {
       successCallback(response)  // Required
     }, response => {
+      this.logError(context, response.status, customErrorMap)
       if (errorCallback) {
         errorCallback(response)
       }
-      this.logError(context, response.status, customErrorMap)
     })
   },
 
@@ -117,10 +117,10 @@ export default {
     context.$http.patch(url, data, this.PATCH_OPTIONS).then(response => {
       successCallback(response)  // Required
     }, response => {
+      this.logError(context, response.status, customErrorMap)
       if (errorCallback) {
         errorCallback(response)
       }
-      this.logError(context, response.status, customErrorMap)
     })
   },
 
@@ -141,10 +141,10 @@ export default {
     context.$http.delete(url, this.DELETE_OPTIONS).then(response => {
       successCallback(response)  // Required
     }, response => {
+      this.logError(context, response.status, customErrorMap)
       if (errorCallback) {
         errorCallback(response)
       }
-      this.logError(context, response.status, customErrorMap)
     })
   }
 }

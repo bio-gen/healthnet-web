@@ -3,13 +3,11 @@
     <div class="row">
   		<div class="col-md-4 col-sm-6 col-md-offset-4 col-sm-offset-3">
         <div v-html="headerInformation"></div>
-        <div class="alert alert-success alert-dismissable" v-if="successMsg">
-          <a href="#" class="close" data-dismiss="alert" aria-label="close">&times;</a>
-          <p>{{ successMsg }}</p>
-        </div>
-        <div class="alert alert-danger" v-if="error">
-          <p>{{ error }}</p>
-        </div>
+        <alertComponent type="success" v-if="successMsg" :msg="successMsg"
+            @faded="successMsg = ''">
+        </alertComponent>
+        <alertComponent type="danger" v-if="error" :msg="error">
+        </alertComponent>
         <form @submit="submit">
           <div class="form-group row required">
             <div class="col-md-6">
@@ -119,8 +117,12 @@
 <script>
 import auth from '@/auth'
 import router from '@/router'
+import AlertComponent from '@/components/general/AlertComponent'
 export default {
   name: 'accountForm',
+  components: {
+    AlertComponent
+  },
   data () {
     return {
       credentials: {
@@ -185,10 +187,12 @@ export default {
       }, (response) => {
         this.saving = false
         if (response.status === 422) {
-          if (response.data.password_confirmation) {
-            this.error = 'Passwords do not match.'
-          } else if (response.data.email) {
-            this.error = 'A user with this email already exists.'
+          if (response.data.errors) {
+            if (response.data.errors[0].source.pointer.includes('email')) {
+              this.error = 'A user with this email already exists.'
+            } else if (response.data.errors[0].source.pointer.includes('password')) {
+              this.error = 'Passwords do not match.'
+            }
           }
         } else {
           this.error = 'There was an error processing your request (' +
@@ -209,8 +213,6 @@ export default {
       }
 
       auth.updateUser(this, auth.user.id, data, (response) => {
-        auth.user.updateUser(data)
-        localStorage.setItem('user', JSON.stringify(this.user))
         this.saving = false
         this.error = ''
         this.successMsg = 'Account information saved successfully.'

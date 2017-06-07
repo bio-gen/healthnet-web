@@ -1,12 +1,10 @@
 <template>
   <div class="profile-entry-list">
-    <div class="alert alert-danger" v-if="error">
-      <p>{{ error }}</p>
-    </div>
-    <div class="alert alert-success alert-dismissable" v-if="successMsg">
-      <a href="#" class="close" data-dismiss="alert" aria-label="close">&times;</a>
-      <strong>Success!</strong> {{ successMsg }}
-    </div>
+    <alertComponent type="success" v-if="successMsg" :msg="successMsg"
+        @faded="successMsg = ''">
+    </alertComponent>
+    <alertComponent type="danger" v-if="error" :msg="error">
+    </alertComponent>
     <div class="panel-group">
       <div class="panel panel-default">
         <div class="panel-heading">
@@ -75,10 +73,11 @@ import util from '@/util'
 import ExperienceEntry from '@/components/dashboard/profile/ExperienceEntry'
 import EducationEntry from '@/components/dashboard/profile/EducationEntry'
 import CertificateEntry from '@/components/dashboard/profile/CertificateEntry'
+import AlertComponent from '@/components/general/AlertComponent'
 export default {
   name: 'profileEntryList',
   components: {
-    ExperienceEntry, EducationEntry, CertificateEntry
+    ExperienceEntry, EducationEntry, CertificateEntry, AlertComponent
   },
   data () {
     return {
@@ -86,7 +85,6 @@ export default {
       error: '',
       successMsg: '',
       loading: false,
-      newEntry: false,
       newEntrySaving: false,
       newEntryError: ''
     }
@@ -98,6 +96,10 @@ export default {
     },
     user: {
       type: Object,
+      required: true
+    },
+    newEntry: {
+      type: Boolean,
       required: true
     }
   },
@@ -120,16 +122,28 @@ export default {
       }
     },
     addEntry () {
-      this.newEntry = true
+      // Do not allow edits
+      for (var i = 0; i < this.entries.length; i++) {
+        var otherEntry = this.entries[i]
+        otherEntry.entryType = 'read'
+      }
+      this.$emit('addEntry')
     },
     editEntry (entry) {
+      // Do not allow multiple edits
+      for (var i = 0; i < this.entries.length; i++) {
+        var otherEntry = this.entries[i]
+        otherEntry.entryType = 'read'
+      }
+      // Do not allow new entries
+      this.$emit('editEntry')
       entry.entryType = 'update'
     },
     cancelEntry (entry) {
       if (entry) {
         entry.entryType = 'read'
       } else {
-        this.newEntry = false
+        this.$emit('cancelEntry')
       }
     },
     performDelete (key, entry) {
@@ -163,7 +177,7 @@ export default {
       )
     },
     performCreate (response) {
-      this.newEntry = false
+      this.$emit('createEntry')
       this.newEntryError = ''
       this.successMsg = 'Entry added successfully.'
       this.newEntrySaving = false

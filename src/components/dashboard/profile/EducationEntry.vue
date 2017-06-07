@@ -1,8 +1,7 @@
 <template>
   <div class="education-entry">
-    <div class="alert alert-danger" v-if="error">
-      <p>{{ error }}</p>
-    </div>
+    <alertComponent type="danger" v-if="error" :msg="error">
+    </alertComponent>
     <form @keyup.esc="cancel" @submit="saveEntry">
       <div class="panel" v-bind:class="entryType === 'read' ? 'panel-default' : 'panel-primary'">
   		  <div class="panel-heading">
@@ -118,8 +117,12 @@
 <script>
 import util from '@/util'
 import EntryMixin from '@/mixins/entry'
+import AlertComponent from '@/components/general/AlertComponent'
 export default {
   name: 'educationEntry',
+  components: {
+    AlertComponent
+  },
   mixins: [
     EntryMixin
   ],

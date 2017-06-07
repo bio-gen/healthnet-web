@@ -231,7 +231,13 @@ export default {
         'attributes': data
       }
     }
-    api.patchEndpoint(context, userURL, fullData, successCallback, errorCallback)
+    api.patchEndpoint(context, userURL, fullData,
+        (response) => {
+          this.user.updateUser(data)
+          localStorage.setItem('user', JSON.stringify(this.user))
+          successCallback(response)
+        },
+        errorCallback)
   },
 
   /**

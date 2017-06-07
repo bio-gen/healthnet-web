@@ -66,5 +66,19 @@ export default {
       element.focus()
       element.select()
     })
+  },
+
+  /**
+   * @summary Fade out an element.
+   * @param {String} elementId
+   * @callback - Callback function to execute when function is completed
+   */
+  elementFadeOut (elementId, completedCallback) {
+    window.setTimeout(() => {
+      $('#' + elementId).fadeTo(2000, 0).slideUp(500, () => {
+        $(this).remove()
+        completedCallback()
+      })
+    }, 4000)
   }
 }

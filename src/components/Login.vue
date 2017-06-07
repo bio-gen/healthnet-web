@@ -4,7 +4,8 @@
   		<div class="col-md-4 col-sm-6 col-md-offset-4 col-sm-offset-3">
   			<h2>Login</h2>
         <p>Log in to your account or <router-link to="/signup">Sign up</router-link>.</p>
-
+        <alertComponent type="danger" v-if="error" :msg="error">
+        </alertComponent>
         <form @submit="login">
 					<div class="form-group">
             <label for="email">Email Address</label>
@@ -30,9 +31,6 @@
             </button>
           </div>
         </form>
-        <div class="alert alert-danger" v-if="error">
-          <p>{{ error }}</p>
-        </div>
 			</div>
 		</div>
   </div>
@@ -41,8 +39,12 @@
 <script>
 // import router from '@/router'
 import auth from '@/auth'
+import AlertComponent from '@/components/general/AlertComponent'
 export default {
   name: 'login',
+  components: {
+    AlertComponent
+  },
   data () {
     return {
       msg: 'Login component',

@@ -10,23 +10,6 @@ export default {
   name: 'editAccount',
   components: {
     AccountForm
-  },
-  data () {
-    return {
-      msg: 'Edit account component'
-    }
-  },
-  props: {
-
-  },
-  methods: {
-
-  },
-  computed: {
-
-  },
-  mounted () {
-
   }
 }
 </script>

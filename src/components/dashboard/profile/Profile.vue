@@ -1,5 +1,10 @@
 <template>
   <div class="profile">
+
+    <alertComponent type="success" v-if="successMsg" :msg="successMsg"
+        @faded="successMsg = ''">
+    </alertComponent>
+
     <div class="jumbotron">
       <form @keyup.esc="cancel" @submit="save">
         <div class="container text-center">
@@ -67,10 +72,16 @@
         </div>
       </form>
     </div>
-    <profileEntryList type="experience" :user="user"></profileEntryList>
-    <profileEntryList type="education" :user="user"></profileEntryList>
-    <profileEntryList type="certificates" :user="user"></profileEntryList>
-    <profileEntryList type="affiliations" :user="user"></profileEntryList>
+
+    <profileEntryList v-for="entryList in entryLists" :key="entryList.type" :type="entryList.type"
+        :user="user" :newEntry="entryList.newEntry" @addEntry="addEntry(entryList)" @editEntry="editEntry"
+        @createEntry="entryList.newEntry = false" @cancelEntry="cancelEntry">
+    </profileEntryList>
+    <!--
+    <profileEntryList type="education" :user="user" @addEntry="addEntry('education')"></profileEntryList>
+    <profileEntryList type="certificates" :user="user" @addEntry="addEntry('certificates')"></profileEntryList>
+    <profileEntryList type="affiliations" :user="user" @addEntry="addEntry('affiliations')"></profileEntryList>
+    -->
   </div>
 </template>
 
@@ -79,10 +90,11 @@ import auth from '@/auth'
 import util from '@/util'
 import ProfileEntryList from '@/components/dashboard/profile/ProfileEntryList'
 import SubmitCancelBtns from '@/components/general/SubmitCancelBtns'
+import AlertComponent from '@/components/general/AlertComponent'
 export default {
   name: 'profile',
   components: {
-    ProfileEntryList, SubmitCancelBtns
+    ProfileEntryList, SubmitCancelBtns, AlertComponent
   },
   data () {
     return {
@@ -90,6 +102,7 @@ export default {
       editing: false,
       loading: false,
       saving: false,
+      successMsg: '',
       userInformation: {
         firstName: '',
         lastName: '',
@@ -103,13 +116,32 @@ export default {
           this.institution = user.institution
           this.location = user.location
         }
-      }
+      },
+      entryLists: [
+        {
+          type: 'experience',
+          newEntry: false
+        },
+        {
+          type: 'education',
+          newEntry: false
+        },
+        {
+          type: 'certificates',
+          newEntry: false
+        },
+        {
+          type: 'affiliations',
+          newEntry: false
+        }
+      ]
     }
   },
   methods: {
     editUser (elementId) {
       this.editing = true
       util.setFocus(this, elementId)
+      this.cancelEntry()  // Close new entries
     },
     cancel () {
       this.editing = false
@@ -129,8 +161,6 @@ export default {
       }
 
       auth.updateUser(this, this.user.id, data, (response) => {
-        auth.user.updateUser(data)
-        localStorage.setItem('user', JSON.stringify(this.user))
         this.saving = false
         this.editing = false
         this.error = ''
@@ -138,6 +168,27 @@ export default {
       }, (response) => {
         this.saving = false
       })
+    },
+    addEntry (entryList) {
+      for (var i = 0; i < this.entryLists.length; i++) {
+        var otherEntryList = this.entryLists[i]
+        otherEntryList.newEntry = false
+      }
+      entryList.newEntry = true
+      this.cancel()  // Close edit user info
+    },
+    editEntry () {
+      for (var i = 0; i < this.entryLists.length; i++) {
+        var entryList = this.entryLists[i]
+        entryList.newEntry = false
+      }
+      this.cancel()  // Close edit user info
+    },
+    cancelEntry () {
+      for (var i = 0; i < this.entryLists.length; i++) {
+        var entryList = this.entryLists[i]
+        entryList.newEntry = false
+      }
     }
   },
   computed: {
