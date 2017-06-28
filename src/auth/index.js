@@ -242,15 +242,16 @@ export default {
 
   /**
    * @summary Log the user out.
-   * To log out, we just need to remove the token and user info
+   * To log out, we just need to remove the token and user info.
    * @param {String} redirect - A route to redirect to after a successful call
+   * @callback onComplete - Callback function if operation succeeded (required)
    */
-  logout (redirect) {
+  logout (redirect, onComplete) {
     localStorage.removeItem('jwt')
     localStorage.removeItem('user')
     this.user.clear()
     if (redirect) {
-      router.push(redirect)
+      router.push(redirect, onComplete)
     }
   },
 

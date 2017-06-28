@@ -18,12 +18,6 @@ export default {
       msg: 'SignUp component'
     }
   },
-  methods: {
-
-  },
-  computed: {
-
-  },
   mounted () {
     if (auth.user.authenticated) {
       router.push('dashboard')

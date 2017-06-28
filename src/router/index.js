@@ -52,6 +52,11 @@ export default new Router({
           component: Inbox
         },
         {
+          path: 'email',
+          name: 'email',
+          component: Profile
+        },
+        {
           path: 'notifications',
           name: 'notifications',
           component: Notifications

@@ -1,50 +1,67 @@
 <template>
   <div class="account-form">
-    <div class="row">
-  		<div class="col-md-4 col-sm-6 col-md-offset-4 col-sm-offset-3">
-        <div v-html="headerInformation"></div>
+    <el-row>
+  		<el-col :md="{span: 8, offset: 8}" :sm="{span: 12, offset: 6}">
+
+        <div v-if="type === 'create'">
+          <h2>Sign Up</h2>
+          <p>Sign up for a free account.</p>
+          <p>Already a user?
+            <router-link to="/">Log in</router-link> to your account.
+          </p>
+        </div>
+        <div v-else>
+          <h2>My Account</h2>
+          <p>Edit your account information.</p>
+        </div>
+
         <alertComponent type="success" v-if="successMsg" :msg="successMsg"
             @faded="successMsg = ''">
         </alertComponent>
         <alertComponent type="danger" v-if="error" :msg="error">
         </alertComponent>
-        <form @submit="submit">
-          <div class="form-group row required">
-            <div class="col-md-6">
-              <label for="first-name" class="control-label">First name</label>
-              <input type="text" class="form-control" id="firstName"
-                name="first-name" placeholder="Your first name"
-                v-model="credentials.firstName" required autofocus>
-            </div>
 
-            <div class="col-md-6">
-              <label for="last-name" class="control-label">Last name</label>
-              <input type="text" class="form-control" id="lastName"
-                name="last-name" placeholder="Your last name"
-                v-model="credentials.lastName" required>
-            </div>
-          </div>
+        <el-form :model="credentials" :rules="rules" label-position="left"
+            label-width="100px" ref="accountForm">
 
-          <div v-if="type === 'update'" class="form-group">
-            <label for="title" class="control-label">Title</label>
-            <input type="text" class="form-control" id="title"
-              name="title" placeholder="Your professional title"
-              v-model="credentials.title">
-          </div>
+          <el-form-item label="Name" required>
+            <el-col :span="11">
+              <el-form-item prop="firstName">
+                <el-input type="text" placeholder="First name" v-model="credentials.firstName"
+                    auto-complete="on" :autofocus="true" id="firstName">
+                </el-input>
+              </el-form-item>
+            </el-col>
+            <el-col :span="2">&nbsp;</el-col>
+            <el-col :span="11">
+              <el-form-item prop="lastName">
+                <el-input type="text" placeholder="Last name" v-model="credentials.lastName"
+                    auto-complete="on">
+                </el-input>
+              </el-form-item>
+            </el-col>
+          </el-form-item>
 
-          <div v-if="type === 'update'" class="form-group">
-            <label for="location" class="control-label">Location</label>
-            <input type="text" class="form-control" id="location"
-              name="location" placeholder="Your current location"
-              v-model="credentials.location">
-          </div>
+          <el-form-item v-if="type === 'update'" prop="title" label="Title">
+            <el-input type="text" placeholder="Professional title" v-model="credentials.title">
+            </el-input>
+          </el-form-item>
 
-          <div v-if="type === 'update'" class="form-group">
-            <label for="institution" class="control-label">Institution</label>
-            <input type="text" class="form-control" id="institution"
-              name="institution" placeholder="Your current institution"
-              v-model="credentials.institution">
-          </div>
+          <el-form-item v-if="type === 'update'" prop="location" label="Location">
+            <el-input type="text" placeholder="Your current location" v-model="credentials.location">
+            </el-input>
+          </el-form-item>
+
+          <el-form-item v-if="type === 'update'" prop="institution" label="Institution">
+            <el-input type="text" placeholder="Your current institution" v-model="credentials.institution">
+            </el-input>
+          </el-form-item>
+
+          <el-form-item v-if="type === 'update'" prop="dateOfBirth" label="Date of birth">
+            <el-date-picker v-model="credentials.dateOfBirth" type="date" placeholder="Pick a day"
+                format="yyyy-MM-dd">
+            </el-date-picker>
+          </el-form-item>
 
           <div v-if="type === 'update'" class="form-group">
             <label for="date-of-birth" class="control-label">Date of birth</label>
@@ -53,12 +70,10 @@
               v-model="credentials.dateOfBirth">
           </div>
 
-          <div v-if="type === 'update'" class="form-group">
-            <label for="phone-number" class="control-label">Phone number</label>
-            <input type="text" class="form-control" id="phoneNumber"
-              name="phone-number" placeholder="(123) 456-7890"
-              v-model="credentials.phoneNumber">
-          </div>
+          <el-form-item v-if="type === 'update'" prop="phoneNumber" label="Phone number">
+            <el-input type="text" placeholder="(123) 456-7890" v-model="credentials.phoneNumber">
+            </el-input>
+          </el-form-item>
 
           <div class="input-group">
             <div class="checkbox" v-if="type === 'update'">
@@ -102,15 +117,15 @@
 
           <br/>
 
-          <div class="form-group">
-            <button type="submit" class="btn btn-primary form-control pull-right">
-              <i v-if="saving" class="fa fa-spinner fa-spin"></i>
-              <span v-else v-html="type === 'update' ? 'Save' : 'Sign Up'"></span>
-            </button>
-          </div>
-        </form>
-      </div>
-    </div>
+          <el-form-item>
+            <el-button type="primary" @click="submit('accountForm')" :loading="saving">
+              <span v-html="type === 'update' ? 'Save' : 'Sign Up'"></span>
+            </el-button>
+          </el-form-item>
+        </el-form>
+
+      </el-col>
+    </el-row>
   </div>
 </template>
 
@@ -147,6 +162,14 @@ export default {
           this.phoneNumber = user.phoneNumber
         }
       },
+      rules: {
+        firstName: [
+          { required: true, message: 'Please enter your first name', trigger: 'blur' }
+        ],
+        lastName: [
+          { required: true, message: 'Please enter your last name', trigger: 'blur' }
+        ]
+      },
       changePassword: false,
       oldPassword: '',
       successMsg: '',
@@ -161,14 +184,18 @@ export default {
     }
   },
   methods: {
-    submit (e) {
-      this.saving = true
-      e.preventDefault()
-      if (this.type === 'create') {
-        this.signup()
-      } else if (this.type === 'update') {
-        this.update()
-      }
+    submit (formName) {
+      this.$refs[formName].validate((valid) => {
+        if (valid) {
+          if (this.type === 'create') {
+            this.signup()
+          } else if (this.type === 'update') {
+            this.update()
+          }
+        } else {
+          return false
+        }
+      })
     },
     signup () {
       var data = {
@@ -226,31 +253,10 @@ export default {
       })
     }
   },
-  computed: {
-    headerInformation () {
-      if (this.type === 'create') {
-        return `<h2>Sign Up</h2>
-                <p>Sign up for a free account.</p>
-                <p>Already a user?
-                  <a href="/">Log in</a> to your account.
-                </p>`
-      } else if (this.type === 'update') {
-        return `<h2>My Account</h2>
-                <p>Edit your account information.</p>`
-      } else {
-        return ''
-      }
-    }
-  },
   mounted () {
     if (this.type === 'update' && auth.user.authenticated) {
       this.credentials.setCredentials(auth.user)
     }
-    this.$nextTick(() => {
-      var element = document.getElementById('firstName')
-      element.focus()
-      element.select()
-    })
   }
 }
 </script>

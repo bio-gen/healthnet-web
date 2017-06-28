@@ -6,10 +6,10 @@ global.jQuery = require('jquery')
 window.$ = $
 var bootstrap = require('bootstrap')
 var bootbox = require('bootbox')
-console.log(bootstrap)
 
 export default {
   confirmDialog (title, message, size, acceptFunction) {
+    console.log(bootstrap)
     bootbox.confirm({
       title: title,
       message: message,

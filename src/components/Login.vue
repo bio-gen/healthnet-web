@@ -1,38 +1,37 @@
 <template>
   <div class="login">
-		<div class="row">
-  		<div class="col-md-4 col-sm-6 col-md-offset-4 col-sm-offset-3">
+		<el-row>
+  		<el-col :md="{span: 8, offset: 8}" :sm="{span: 12, offset: 6}">
   			<h2>Login</h2>
         <p>Log in to your account or <router-link to="/signup">Sign up</router-link>.</p>
+
         <alertComponent type="danger" v-if="error" :msg="error">
         </alertComponent>
-        <form @submit="login">
-					<div class="form-group">
-            <label for="email">Email Address</label>
-            <input type="email" class="form-control" id="email" name="email"
-              aria-describedby="emailHelp" placeholder="Enter email"
-              v-model="credentials.email" required autofocus>
-            <small id="emailHelp" class="form-text text-muted">
-              We will never share your email with anyone else.
-            </small>
-          </div>
 
-          <div class="form-group">
-            <label for="password">Password</label>
-            <input type="password" class="form-control" id="password"
-              name="password" placeholder="Password"
-              v-model="credentials.password" required>
-          </div>
+        <el-form :model="credentials" :rules="rules" label-position="top"
+            label-width="110px" ref="loginForm">
 
-          <div class="form-group">
-            <button type="submit" class="btn btn-primary form-control pull-right">
-              <i v-if="loading" class="fa fa-spinner fa-spin"></i>
-              <span v-else>Log In</span>
-            </button>
-          </div>
-        </form>
-			</div>
-		</div>
+          <el-form-item label="Email Address" prop="email">
+            <el-input type="email" placeholder="Enter email" v-model="credentials.email"
+                auto-complete="on" :autofocus="true">
+            </el-input>
+          </el-form-item>
+
+          <el-form-item label="Password" prop="password">
+            <el-input type="password" placeholder="Enter password" v-model="credentials.password"
+                auto-complete="on" @keyup.enter="login('loginForm')">
+            </el-input>
+          </el-form-item>
+
+          <el-form-item>
+            <el-button type="primary" @click="login('loginForm')" :loading="loading">
+              Log In
+            </el-button>
+          </el-form-item>
+
+        </el-form>
+			</el-col>
+		</el-row>
   </div>
 </template>
 
@@ -52,23 +51,37 @@ export default {
         email: '',
         password: ''
       },
+      rules: {
+        email: [
+          { required: true, message: 'Please enter your email', trigger: 'blur' },
+          { type: 'email', message: 'Please enter a valid email address', trigger: 'blur' }
+        ],
+        password: [
+          { required: true, message: 'Please enter a password', trigger: 'blur' }
+        ]
+      },
       error: '',
       loading: false
     }
   },
   methods: {
-    login (e) {
-      this.loading = true
-      e.preventDefault()
-      var credentials = {
-        auth: {
-          email: this.credentials.email,
-          password: this.credentials.password
+    login (formName) {
+      this.$refs[formName].validate((valid) => {
+        if (valid) {
+          this.loading = true
+          var credentials = {
+            auth: {
+              email: this.credentials.email,
+              password: this.credentials.password
+            }
+          }
+          // We need to pass the component's this context
+          // to properly make use of http in the auth service
+          auth.login(this, credentials, 'dashboard')
+        } else {
+          return false
         }
-      }
-      // We need to pass the component's this context
-      // to properly make use of http in the auth service
-      auth.login(this, credentials, 'dashboard')
+      })
     }
   }
 }
